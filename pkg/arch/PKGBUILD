@@ -1,7 +1,7 @@
 # Maintainer: Otreblan <otreblain@gmail.com>
 
 pkgname=ray-tracing-git
-pkgver=v4.0.r21.g2684a5d
+pkgver=0.0.0.r1.gd33a397
 pkgrel=1
 epoch=
 pkgdesc="Ray tracing"

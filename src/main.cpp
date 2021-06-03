@@ -15,6 +15,7 @@
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <unistd.h>
 
 #include <fmt/core.h>
 
@@ -24,11 +25,16 @@ int main()
 	const int image_width = 256;
 	const int image_height = 256;
 
+	bool stdout_tty = isatty(STDOUT_FILENO);
+
 	// Render
 	fmt::print("P3\n{} {}\n255\n", image_width, image_height);
 
 	for (int j = image_height-1; j >= 0; --j)
 	{
+		if(!stdout_tty)
+			fmt::print(stderr, "\rScanlines ramaining: {} ", j);
+
 		for (int i = 0; i < image_width; ++i)
 		{
 			auto r = double(i) / (image_width-1);
