@@ -9,6 +9,7 @@ https://raytracing.github.io/
 
 * `cmake`
 * `libfmt-dev`
+* `libgml-dev`
 
 ## Build
 ``` bash

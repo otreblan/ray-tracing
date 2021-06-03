@@ -18,6 +18,7 @@
 #include <unistd.h>
 
 #include <fmt/core.h>
+#include <glm/vec3.hpp>
 
 int main()
 {

@@ -53,20 +53,19 @@ pkg_check_modules(shared
 		fmt
 )
 
-## Header only libraries
-#pkg_check_modules(header_only
-#	REQUIRED IMPORTED_TARGET
-#		libfoo3
-#		libfoo4
-#)
+# Header only libraries
+pkg_check_modules(header_only
+	REQUIRED IMPORTED_TARGET
+		glm
+)
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::shared
 
-#	INTERFACE
-#		PkgConfig::header_only
+	INTERFACE
+		PkgConfig::header_only
 )
 
 # Default flags
