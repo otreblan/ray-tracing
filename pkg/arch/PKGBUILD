@@ -1,16 +1,16 @@
 # Maintainer: Otreblan <otreblain@gmail.com>
 
-pkgname=hello-git
+pkgname=ray-tracing-git
 pkgver=v4.0.r21.g2684a5d
 pkgrel=1
 epoch=
-pkgdesc="A C++ template"
+pkgdesc="Ray tracing"
 arch=('x86_64')
-url="https://github.com/otreblan/hello"
+url="https://github.com/otreblan/ray-tracing"
 license=('GPL3')
 groups=()
 depends=('gcc-libs')
-makedepends=('git' 'asciidoctor' 'cmake')
+makedepends=('git' 'cmake')
 checkdepends=()
 optdepends=()
 provides=(${pkgname%-git})
@@ -37,7 +37,6 @@ build() {
 
 	cmake \
 		-DCMAKE_INSTALL_PREFIX=/usr \
-		-DCMAKE_UNITY_BUILD=ON \
 		-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		..
