@@ -3,10 +3,12 @@
 ![GitHub](https://img.shields.io/github/license/otreblan/ray-tracing?logo=gnu)
 
 # Ray tracing
+https://raytracing.github.io/
 
 ## Dependencies
 
 * `cmake`
+* `libfmt-dev`
 
 ## Build
 ``` bash
