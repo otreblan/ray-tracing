@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #include <string_view>
 
 #include <fmt/format.h>
