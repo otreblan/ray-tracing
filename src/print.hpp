@@ -17,8 +17,9 @@
 #pragma once
 
 #include <fmt/format.h>
-#include <glm/vec3.hpp>
 #include <glm/common.hpp>
+#include <glm/exponential.hpp>
+#include <glm/vec3.hpp>
 
 #include "camera.hpp"
 
@@ -44,8 +45,9 @@ struct fmt::formatter<sampled_color>: fmt::formatter<int>
 	auto format(const sampled_color& c, FormatContext& ctx)
 	{
 		float scale = 1.f/c.samples_per_pixel;
+
 		auto color = glm::clamp(
-			c.pixel_color*scale,
+			glm::sqrt(c.pixel_color*scale),
 			{0.f, 0.f, 0.f},
 			{0.999f, 0.999f, 0.999f}
 		);

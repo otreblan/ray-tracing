@@ -39,7 +39,7 @@ glm::vec3 ray_color(const ray& r, const hittable& world, int depth)
 	if(depth <= 0)
 		return glm::vec3(0.f, 0.f, 0.f);
 
-	if(world.hit(r, 0.f, HUGE_VALF, rec))
+	if(world.hit(r, 0.001f, HUGE_VALF, rec))
 	{
 		glm::vec3 target = rec.p + rec.normal + glm::ballRand(1.f);
 		return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth-1);
@@ -48,7 +48,7 @@ glm::vec3 ray_color(const ray& r, const hittable& world, int depth)
 	// Background
 	glm::vec3 unit_direction = glm::normalize(r.direction);
 	float t = 0.5f*(unit_direction.y + 1.f);
-	return glm::lerp(glm::vec3(1, 1, 1), glm::vec3(0.5f, 0.7f, 1.f), t);
+	return glm::lerp(glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.5f, 0.7f, 1.f), t);
 }
 
 int main()
