@@ -20,6 +20,7 @@
 
 #include <fmt/core.h>
 #include <glm/vec3.hpp>
+#include <glm/gtc/random.hpp>
 #include <glm/geometric.hpp>
 #include <glm/gtx/compatibility.hpp>
 
@@ -31,11 +32,18 @@
 #include "rtweekend.hpp"
 #include "sphere.hpp"
 
-glm::vec3 ray_color(const ray& r, const hittable& world)
+glm::vec3 ray_color(const ray& r, const hittable& world, int depth)
 {
 	hit_record rec;
+
+	if(depth <= 0)
+		return glm::vec3(0.f, 0.f, 0.f);
+
 	if(world.hit(r, 0.f, HUGE_VALF, rec))
-		return 0.5f *(rec.normal + glm::vec3(1.f, 1.f, 1.f));
+	{
+		glm::vec3 target = rec.p + rec.normal + glm::ballRand(1.f);
+		return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth-1);
+	}
 
 	// Background
 	glm::vec3 unit_direction = glm::normalize(r.direction);
@@ -52,6 +60,7 @@ int main()
 	const int image_width = 400;
 	const int image_height = image_width/aspect_ratio;
 	const int samples_per_pixel = 100;
+	const int max_depth = 50;
 
 	// World
 	hittable_list world;
@@ -81,7 +90,7 @@ int main()
 				float u = (i+random_float())/(image_width-1);
 				float v = (j+random_float())/(image_height-1);
 				ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, world);
+				pixel_color += ray_color(r, world, max_depth);
 			}
 
 			fmt::print("{}\n", sampled_color(pixel_color, samples_per_pixel));

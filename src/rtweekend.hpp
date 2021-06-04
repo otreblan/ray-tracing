@@ -18,9 +18,30 @@
 
 #include <random>
 
+#include <glm/vec3.hpp>
+
 inline float random_float()
 {
 	static std::uniform_real_distribution<float> distribution(0.f, 1.f);
 	static std::mt19937 generator;
 	return distribution(generator);
+}
+
+inline float random_float(float _min, float _max)
+{
+	return std::lerp(_min, _max, random_float());
+}
+
+glm::vec3 random_vec3()
+{
+	return {random_float(), random_float(), random_float()};
+}
+
+glm::vec3 random_vec3(float _min, float _max)
+{
+	return {
+		random_float(_min, _max),
+		random_float(_min, _max),
+		random_float(_min, _max)
+	};
 }
