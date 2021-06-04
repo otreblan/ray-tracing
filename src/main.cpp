@@ -26,22 +26,33 @@
 #include "print.hpp"
 #include "ray.hpp"
 
-bool hit_sphere(const glm::vec3& center, float radius, const ray& r)
+float hit_sphere(const glm::vec3& center, float radius, const ray& r)
 {
 	glm::vec3 oc = r.origin - center;
 	float a = glm::dot(r.direction, r.direction);
 	float b = 2.f * glm::dot(oc, r.direction);
 	float c = glm::dot(oc, oc) - radius*radius;
-	return b*b - 4.f*a*c > 0;
+	float discriminant = b*b - 4.f*a*c;
+	if(discriminant < 0.f)
+		return -1.f;
+	else
+		return (-b - sqrtf(discriminant))/(2.f*a);
 }
 
 glm::vec3 ray_color(const ray& r)
 {
-	if(hit_sphere(glm::vec3(0.f, 0.f ,-1.f), 0.5f, r))
-		return glm::vec3(1.f, 0.f ,0.f);
+	float t = hit_sphere(glm::vec3(0.f, 0.f ,-1.f), 0.5f, r);
 
+	// Sphere
+	if(t > 0.f)
+	{
+		glm::vec3 N = glm::normalize(r.at(t) - glm::vec3(0.f, 0.f, -1.f));
+		return 0.5f*(N+glm::vec3(1.f, 1.f, 1.f));
+	}
+
+	// Background
 	glm::vec3 unit_direction = glm::normalize(r.direction);
-	float t = 0.5f*(unit_direction.y + 1);
+	t = 0.5f*(unit_direction.y + 1);
 	return glm::lerp(glm::vec3(1, 1, 1), glm::vec3(0.5f, 0.7f, 1.f), t);
 }
 
