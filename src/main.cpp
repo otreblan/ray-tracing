@@ -23,39 +23,21 @@
 #include <glm/geometric.hpp>
 #include <glm/gtx/compatibility.hpp>
 
+#include "hittable.hpp"
+#include "hittable_list.hpp"
 #include "print.hpp"
 #include "ray.hpp"
+#include "sphere.hpp"
 
-float hit_sphere(const glm::vec3& center, float radius, const ray& r)
+glm::vec3 ray_color(const ray& r, const hittable& world)
 {
-	glm::vec3 oc = r.origin - center;
-
-	float a      = glm::dot(r.direction, r.direction);
-	float half_b = glm::dot(oc, r.direction);
-	float c      = glm::dot(oc, oc) - radius*radius;
-
-	float discriminant = half_b*half_b - a*c;
-
-	if(discriminant < 0.f)
-		return -1.f;
-	else
-		return (-half_b - sqrtf(discriminant))/a;
-}
-
-glm::vec3 ray_color(const ray& r)
-{
-	float t = hit_sphere(glm::vec3(0.f, 0.f ,-1.f), 0.5f, r);
-
-	// Sphere
-	if(t > 0.f)
-	{
-		glm::vec3 N = glm::normalize(r.at(t) - glm::vec3(0.f, 0.f, -1.f));
-		return 0.5f*(N+glm::vec3(1.f, 1.f, 1.f));
-	}
+	hit_record rec;
+	if(world.hit(r, 0.f, HUGE_VALF, rec))
+		return 0.5f *(rec.normal + glm::vec3(1.f, 1.f, 1.f));
 
 	// Background
 	glm::vec3 unit_direction = glm::normalize(r.direction);
-	t = 0.5f*(unit_direction.y + 1);
+	float t = 0.5f*(unit_direction.y + 1.f);
 	return glm::lerp(glm::vec3(1, 1, 1), glm::vec3(0.5f, 0.7f, 1.f), t);
 }
 
@@ -67,6 +49,11 @@ int main()
 	const float aspect_ratio = 16.f/9.f;
 	const int image_width = 400;
 	const int image_height = image_width/aspect_ratio;
+
+	// World
+	hittable_list world;
+	world.add<sphere>(glm::vec3(0.f, 0.f, -1.f), 0.5f);
+	world.add<sphere>(glm::vec3(0.f, -100.5f, -1.f), 100.f);
 
 	// Camera
 	float viewport_height = 2.f;
@@ -98,7 +85,7 @@ int main()
 
 			ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
 
-			fmt::print("{}\n", ray_color(r));
+			fmt::print("{}\n", ray_color(r, world));
 		}
 	}
 }
