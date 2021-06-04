@@ -19,6 +19,8 @@
 #include <random>
 
 #include <glm/vec3.hpp>
+#include <glm/gtc/random.hpp>
+#include <glm/gtx/compatibility.hpp>
 
 inline float random_float()
 {
@@ -32,16 +34,25 @@ inline float random_float(float _min, float _max)
 	return std::lerp(_min, _max, random_float());
 }
 
-glm::vec3 random_vec3()
+inline glm::vec3 random_vec3()
 {
 	return {random_float(), random_float(), random_float()};
 }
 
-glm::vec3 random_vec3(float _min, float _max)
+inline glm::vec3 random_vec3(float _min, float _max)
 {
 	return {
 		random_float(_min, _max),
 		random_float(_min, _max),
 		random_float(_min, _max)
 	};
+}
+
+inline glm::vec3 random_in_hemisphere(const glm::vec3& normal)
+{
+	glm::vec3 in_ball = glm::ballRand(1.f);
+	if(glm::dot(in_ball, normal) > 0.f)
+		return in_ball;
+	else
+		return -in_ball;
 }
