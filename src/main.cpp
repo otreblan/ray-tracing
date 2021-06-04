@@ -26,11 +26,23 @@
 #include "print.hpp"
 #include "ray.hpp"
 
+bool hit_sphere(const glm::vec3& center, float radius, const ray& r)
+{
+	glm::vec3 oc = r.origin - center;
+	float a = glm::dot(r.direction, r.direction);
+	float b = 2.f * glm::dot(oc, r.direction);
+	float c = glm::dot(oc, oc) - radius*radius;
+	return b*b - 4.f*a*c > 0;
+}
+
 glm::vec3 ray_color(const ray& r)
 {
+	if(hit_sphere(glm::vec3(0.f, 0.f ,-1.f), 0.5f, r))
+		return glm::vec3(1.f, 0.f ,0.f);
+
 	glm::vec3 unit_direction = glm::normalize(r.direction);
-	float t = 0.5f*(unit_direction.y + 1.f);
-	return glm::lerp(glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.5f, 0.7f, 1.f), t);
+	float t = 0.5f*(unit_direction.y + 1);
+	return glm::lerp(glm::vec3(1, 1, 1), glm::vec3(0.5f, 0.7f, 1.f), t);
 }
 
 int main()
