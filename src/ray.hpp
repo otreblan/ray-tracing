@@ -16,20 +16,23 @@
 
 #pragma once
 
-#include <fmt/format.h>
+#include <utility>
+
 #include <glm/vec3.hpp>
 
-template<>
-struct fmt::formatter<glm::vec3>: fmt::formatter<int>
+struct ray
 {
-	template <typename FormatContext>
-	auto format(const glm::vec3& v, FormatContext& ctx)
+	ray(){};
+	ray(glm::vec3 origin, glm::vec3 direction):
+		origin(std::move(origin)),
+		direction(std::move(direction))
+	{};
+
+	glm::vec3 at(float t) const
 	{
-		return format_to(ctx.out(),
-			"{} {} {}",
-			(int)(255.999f*v.x),
-			(int)(255.999f*v.y),
-			(int)(255.999f*v.z)
-		);
+		return origin + t*direction;
 	}
+
+	glm::vec3 origin;
+	glm::vec3 direction;
 };
