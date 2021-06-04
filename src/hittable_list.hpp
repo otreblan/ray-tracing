@@ -31,7 +31,7 @@ public:
 		requires(std::derived_from<T, hittable>)
 	hittable_list(Args&&... args)
 	{
-		add<T>(args...);
+		add<T>(std::forward<Args>(args)...);
 	}
 
 	void clear()
@@ -43,7 +43,7 @@ public:
 		requires(std::derived_from<T, hittable>)
 	void add(Args&&... args)
 	{
-		objects.emplace_back(std::make_unique<T>(args...));
+		objects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 	}
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override;
