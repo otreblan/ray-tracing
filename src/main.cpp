@@ -88,4 +88,7 @@ int main()
 			fmt::print("{}\n", ray_color(r, world));
 		}
 	}
+
+	if(!stdout_tty)
+		fmt::print(stderr, "\n");
 }

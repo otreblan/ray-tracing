@@ -26,9 +26,12 @@ class hittable_list: public hittable
 {
 public:
 	hittable_list(){};
-	hittable_list(std::shared_ptr<hittable> object)
+
+	template<class T, typename... Args>
+		requires(std::derived_from<T, hittable>)
+	hittable_list(Args&&... args)
 	{
-		add(object);
+		add<T>(args...);
 	}
 
 	void clear()
@@ -36,19 +39,14 @@ public:
 		objects.clear();
 	}
 
-	void add(std::shared_ptr<hittable> object)
-	{
-		objects.push_back(object);
-	}
-
 	template<class T, typename... Args>
 		requires(std::derived_from<T, hittable>)
 	void add(Args&&... args)
 	{
-		objects.emplace_back(std::make_shared<T>(args...));
+		objects.emplace_back(std::make_unique<T>(args...));
 	}
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override;
 
-	std::vector<std::shared_ptr<hittable>> objects;
+	std::vector<std::unique_ptr<hittable>> objects;
 };
