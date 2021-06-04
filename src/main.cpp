@@ -29,14 +29,17 @@
 float hit_sphere(const glm::vec3& center, float radius, const ray& r)
 {
 	glm::vec3 oc = r.origin - center;
-	float a = glm::dot(r.direction, r.direction);
-	float b = 2.f * glm::dot(oc, r.direction);
-	float c = glm::dot(oc, oc) - radius*radius;
-	float discriminant = b*b - 4.f*a*c;
+
+	float a      = glm::dot(r.direction, r.direction);
+	float half_b = glm::dot(oc, r.direction);
+	float c      = glm::dot(oc, oc) - radius*radius;
+
+	float discriminant = half_b*half_b - a*c;
+
 	if(discriminant < 0.f)
 		return -1.f;
 	else
-		return (-b - sqrtf(discriminant))/(2.f*a);
+		return (-half_b - sqrtf(discriminant))/a;
 }
 
 glm::vec3 ray_color(const ray& r)
