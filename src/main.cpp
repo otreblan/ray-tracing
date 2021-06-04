@@ -23,10 +23,12 @@
 #include <glm/geometric.hpp>
 #include <glm/gtx/compatibility.hpp>
 
+#include "camera.hpp"
 #include "hittable.hpp"
 #include "hittable_list.hpp"
 #include "print.hpp"
 #include "ray.hpp"
+#include "rtweekend.hpp"
 #include "sphere.hpp"
 
 glm::vec3 ray_color(const ray& r, const hittable& world)
@@ -49,6 +51,7 @@ int main()
 	const float aspect_ratio = 16.f/9.f;
 	const int image_width = 400;
 	const int image_height = image_width/aspect_ratio;
+	const int samples_per_pixel = 100;
 
 	// World
 	hittable_list world;
@@ -59,16 +62,7 @@ int main()
 	float viewport_height = 2.f;
 	float viewport_width = aspect_ratio*viewport_height;
 	float focal_length = 1.f;
-
-	glm::vec3 origin(0.f, 0.f, 0.f);
-	glm::vec3 horizontal(viewport_width, 0.f, 0.f);
-	glm::vec3 vertical(0.f, viewport_height, 0.f);
-	glm::vec3 lower_left_corner =
-		origin -
-		horizontal/2.f -
-		vertical/2.f -
-		glm::vec3(0.f, 0.f, focal_length)
-	;
+	camera cam(viewport_height, viewport_width, focal_length);
 
 	// Render
 	fmt::print("P3\n{} {}\n255\n", image_width, image_height);
@@ -80,12 +74,17 @@ int main()
 
 		for (int i = 0; i < image_width; ++i)
 		{
-			float u = ((float)i)/(image_width-1);
-			float v = ((float)j)/(image_height-1);
+			glm::vec3 pixel_color(0.f, 0.f, 0.f);
 
-			ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
+			for(int s = 0; s < samples_per_pixel; ++s)
+			{
+				float u = (i+random_float())/(image_width-1);
+				float v = (j+random_float())/(image_height-1);
+				ray r = cam.get_ray(u, v);
+				pixel_color += ray_color(r, world);
+			}
 
-			fmt::print("{}\n", ray_color(r, world));
+			fmt::print("{}\n", sampled_color(pixel_color, samples_per_pixel));
 		}
 	}
 

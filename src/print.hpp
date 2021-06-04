@@ -18,6 +18,9 @@
 
 #include <fmt/format.h>
 #include <glm/vec3.hpp>
+#include <glm/common.hpp>
+
+#include "camera.hpp"
 
 template<>
 struct fmt::formatter<glm::vec3>: fmt::formatter<int>
@@ -30,6 +33,28 @@ struct fmt::formatter<glm::vec3>: fmt::formatter<int>
 			(int)(255.999f*v.x),
 			(int)(255.999f*v.y),
 			(int)(255.999f*v.z)
+		);
+	}
+};
+
+template<>
+struct fmt::formatter<sampled_color>: fmt::formatter<int>
+{
+	template <typename FormatContext>
+	auto format(const sampled_color& c, FormatContext& ctx)
+	{
+		float scale = 1.f/c.samples_per_pixel;
+		auto color = glm::clamp(
+			c.pixel_color*scale,
+			{0.f, 0.f, 0.f},
+			{0.999f, 0.999f, 0.999f}
+		);
+
+		return format_to(ctx.out(),
+			"{} {} {}",
+			(int)(256*color.x),
+			(int)(256*color.y),
+			(int)(256*color.z)
 		);
 	}
 };
