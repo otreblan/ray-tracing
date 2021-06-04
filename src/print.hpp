@@ -14,39 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
-#include <unistd.h>
+#include <string_view>
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <glm/vec3.hpp>
 
-#include "print.hpp"
-
-int main()
+template<>
+struct fmt::formatter<glm::vec3>: fmt::formatter<int>
 {
-	// Image
-	const int image_width = 256;
-	const int image_height = 256;
-
-	bool stdout_tty = isatty(STDOUT_FILENO);
-
-	// Render
-	fmt::print("P3\n{} {}\n255\n", image_width, image_height);
-
-	for (int j = image_height-1; j >= 0; --j)
+	template <typename FormatContext>
+	auto format(const glm::vec3& v, FormatContext& ctx)
 	{
-		if(!stdout_tty)
-			fmt::print(stderr, "\rScanlines ramaining: {} ", j);
-
-		for (int i = 0; i < image_width; ++i)
-		{
-			glm::vec3 pixel_color(
-				((float)i)/(image_width-1),
-				((float)j)/(image_height-1),
-				0.25f
-			);
-
-			fmt::print("{}\n", pixel_color);
-		}
+		return format_to(ctx.out(),
+			"{} {} {}",
+			(int)(255.999f*v.x),
+			(int)(255.999f*v.y),
+			(int)(255.999f*v.z)
+		);
 	}
-}
+};
