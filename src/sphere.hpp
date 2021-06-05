@@ -23,11 +23,13 @@ class sphere: public hittable
 public:
 	glm::vec3 center;
 	float radius;
+	std::shared_ptr<material> mat_ptr;
 
 	sphere(){};
-	sphere(glm::vec3 center, float radius):
+	sphere(glm::vec3 center, float radius, std::shared_ptr<material> m):
 		center(std::move(center)),
-		radius(std::move(radius))
+		radius(std::move(radius)),
+		mat_ptr(std::move(m))
 	{};
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override;

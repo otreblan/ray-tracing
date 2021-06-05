@@ -56,3 +56,9 @@ inline glm::vec3 random_in_hemisphere(const glm::vec3& normal)
 	else
 		return -in_ball;
 }
+
+constexpr bool near_zero(const glm::vec3& v)
+{
+	constexpr float s = 1e-8f;
+	return glm::all(glm::lessThan(glm::abs(v), glm::vec3(s)));
+}

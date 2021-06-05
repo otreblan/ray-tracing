@@ -27,6 +27,9 @@
 #include "camera.hpp"
 #include "hittable.hpp"
 #include "hittable_list.hpp"
+#include "lambertian.hpp"
+#include "material.hpp"
+#include "metal.hpp"
 #include "print.hpp"
 #include "ray.hpp"
 #include "rtweekend.hpp"
@@ -37,12 +40,17 @@ glm::vec3 ray_color(const ray& r, const hittable& world, int depth)
 	hit_record rec;
 
 	if(depth <= 0)
-		return glm::vec3(0.f, 0.f, 0.f);
+		return glm::vec3(0.f);
 
 	if(world.hit(r, 0.001f, HUGE_VALF, rec))
 	{
-		glm::vec3 target = rec.p + random_in_hemisphere(rec.normal);
-		return 0.5f * ray_color(ray(rec.p, target - rec.p), world, depth-1);
+		ray scattered;
+		glm::vec3 attenuation;
+
+		if(rec.mat_ptr && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+			return attenuation * ray_color(scattered, world, depth-1);
+
+		return glm::vec3(0.f);
 	}
 
 	// Background
@@ -64,8 +72,16 @@ int main()
 
 	// World
 	hittable_list world;
-	world.add<sphere>(glm::vec3(0.f, 0.f, -1.f), 0.5f);
-	world.add<sphere>(glm::vec3(0.f, -100.5f, -1.f), 100.f);
+
+	auto material_ground = std::make_shared<lambertian>(glm::vec3(0.8f, 0.8f, 0.f));
+	auto material_center = std::make_shared<lambertian>(glm::vec3(0.7f, 0.3f, 0.3f));
+	auto material_left = std::make_shared<metal>(glm::vec3(0.8f, 0.8f, 0.8f), 0.3f);
+	auto material_right = std::make_shared<metal>(glm::vec3(0.8f, 0.6f, 0.2f), 1.f);
+
+	world.add<sphere>(glm::vec3(0.f,  -100.5f, -1.f), 100.f, material_ground);
+	world.add<sphere>(glm::vec3(0.f,  0.f,     -1.f), 0.5f, material_center);
+	world.add<sphere>(glm::vec3(-1.f, 0.f,     -1.f), 0.5f, material_left);
+	world.add<sphere>(glm::vec3(1.f,  0.f,     -1.f), 0.5f, material_right);
 
 	// Camera
 	float viewport_height = 2.f;
@@ -83,7 +99,7 @@ int main()
 
 		for (int i = 0; i < image_width; ++i)
 		{
-			glm::vec3 pixel_color(0.f, 0.f, 0.f);
+			glm::vec3 pixel_color(0.f);
 
 			for(int s = 0; s < samples_per_pixel; ++s)
 			{

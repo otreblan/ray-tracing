@@ -51,6 +51,7 @@ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 
 	rec.normal = glm::faceforward(outward_normal, outward_normal, r.direction);
 	rec.front_face = rec.normal == outward_normal;
+	rec.mat_ptr = mat_ptr;
 
 	return true;
 }

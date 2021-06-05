@@ -16,27 +16,38 @@
 
 #pragma once
 
-#include <memory>
-
-#include <glm/geometric.hpp>
-
+#include "camera.hpp"
+#include "hittable.hpp"
+#include "material.hpp"
 #include "ray.hpp"
 
-class material;
+#include <glm/vec3.hpp>
 
-struct hit_record
-{
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
-};
-
-class hittable
+class lambertian: public material
 {
 public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+	glm::vec3 albedo;
 
-	virtual ~hittable() = default;
+	lambertian(glm::vec3 albedo):
+		albedo(albedo)
+	{};
+
+	virtual bool scatter(
+		const ray&,
+		const hit_record& rec,
+		glm::vec3& attenutation,
+		ray& scattered
+	) const override
+	{
+		glm::vec3 scatter_direction = rec.normal + glm::sphericalRand(1.f);
+
+		// Catch degenerate scatter direction
+		if(near_zero(scatter_direction))
+			scatter_direction = rec.normal;
+
+		scattered = ray(rec.p, scatter_direction);
+		attenutation = albedo;
+
+		return true;
+	}
 };

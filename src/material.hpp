@@ -16,27 +16,20 @@
 
 #pragma once
 
-#include <memory>
+#include <glm/vec3.hpp>
 
-#include <glm/geometric.hpp>
+#include "rtweekend.hpp"
 
-#include "ray.hpp"
+struct hit_record;
+struct ray;
 
-class material;
-
-struct hit_record
-{
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
-};
-
-class hittable
+class material
 {
 public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
-
-	virtual ~hittable() = default;
+	virtual bool scatter(
+		const ray& r_in,
+		const hit_record& rec,
+		glm::vec3& attenutation,
+		ray& scattered
+	) const = 0;
 };

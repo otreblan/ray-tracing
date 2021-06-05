@@ -27,13 +27,6 @@ class hittable_list: public hittable
 public:
 	hittable_list(){};
 
-	template<class T, typename... Args>
-		requires(std::derived_from<T, hittable>)
-	hittable_list(Args&&... args)
-	{
-		add<T>(std::forward<Args>(args)...);
-	}
-
 	void clear()
 	{
 		objects.clear();
@@ -41,9 +34,9 @@ public:
 
 	template<class T, typename... Args>
 		requires(std::derived_from<T, hittable>)
-	void add(Args&&... args)
+	auto& add(Args&&... args)
 	{
-		objects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+		return objects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 	}
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override;

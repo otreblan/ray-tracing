@@ -16,27 +16,35 @@
 
 #pragma once
 
-#include <memory>
-
-#include <glm/geometric.hpp>
-
+#include "camera.hpp"
+#include "hittable.hpp"
+#include "material.hpp"
 #include "ray.hpp"
 
-class material;
+#include <glm/vec3.hpp>
 
-struct hit_record
-{
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
-};
-
-class hittable
+class metal: public material
 {
 public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+	glm::vec3 albedo;
+	float fuzz;
 
-	virtual ~hittable() = default;
+	metal(glm::vec3 albedo, float f):
+		albedo(std::move(albedo)),
+		fuzz(std::min(f, 1.f))
+	{};
+
+	virtual bool scatter(
+		const ray& r_in,
+		const hit_record& rec,
+		glm::vec3& attenutation,
+		ray& scattered
+	) const override
+	{
+		glm::vec3 reflected = glm::reflect(glm::normalize(r_in.direction), rec.normal);
+		scattered = ray(rec.p, reflected + fuzz*glm::ballRand(1.f));
+		attenutation = albedo;
+
+		return glm::dot(scattered.direction, rec.normal) > 0.f;
+	}
 };
