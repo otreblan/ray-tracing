@@ -40,4 +40,5 @@ public:
 		ray& scattered
 	) const override;
 
+	virtual ~metal() = default;
 };

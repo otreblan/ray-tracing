@@ -36,4 +36,5 @@ public:
 		ray& scattered
 	) const override;
 
+	virtual ~lambertian() = default;
 };

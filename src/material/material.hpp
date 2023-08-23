@@ -30,4 +30,6 @@ public:
 		glm::vec3& attenutation,
 		ray& scattered
 	) const = 0;
+
+	virtual ~material() = default;
 };
