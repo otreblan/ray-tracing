@@ -16,7 +16,6 @@
 
 #include "metal.hpp"
 
-#include "../camera.hpp"
 #include "../hittable.hpp"
 #include "../ray.hpp"
 #include "../rtweekend.hpp"
