@@ -34,9 +34,9 @@ public:
 
 	template<class T, typename... Args>
 		requires(std::derived_from<T, hittable>)
-	auto& add(Args&&... args)
+	void add(Args&&... args)
 	{
-		return objects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+		objects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 	}
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override;

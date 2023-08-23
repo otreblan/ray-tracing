@@ -115,4 +115,6 @@ int main()
 
 	if(!stdout_tty)
 		fmt::print(stderr, "\n");
+
+	return EXIT_SUCCESS;
 }
