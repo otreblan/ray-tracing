@@ -11,16 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: ammaraskar/gcc-problem-matcher@master
 
     - name: deps
-      run: sudo apt install g++-10 libfmt-dev libglm-dev
+      run: sudo apt install libfmt-dev libglm-dev
 
     - name: configure
       run: cmake
-        -DCMAKE_CXX_COMPILER=g++-10
-        -DCMAKE_C_COMPILER=gcc-10
         -DCMAKE_CXX_FLAGS="-O2 -pipe -fno-plt -Wall -Wextra"
         -DCMAKE_C_FLAGS="-O2 -pipe -fno-plt -Wall -Wextra"
         -DCMAKE_BUILD_TYPE=Release
@@ -38,58 +36,7 @@ jobs:
           strip --strip-all $(find build -maxdepth 1 -executable -type f)
           cmake --build build --target package
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: ubuntu_package
         path: build/*.deb
-
-  arch-linux:
-    runs-on: ubuntu-latest
-    container: oblique/archlinux-yay
-
-    steps:
-    - name: Syu
-      run: sudo -u aur yay -Syu --noconfirm jq
-
-    - name: Get last tag
-      id: tag
-      env:
-        url: https://api.github.com/repos/${{ github.repository }}/tags
-      run: |
-          set -o pipefail
-          echo ::set-output name=tag::$(curl \
-              --silent \
-              --header 'authorization: Bearer ${{ github.token }}' \
-              --url $url | \
-              jq --raw-output '.[].name' | \
-              head --lines=1 \
-          )
-
-    - uses: actions/checkout@v2
-      with:
-        ref: ${{ steps.tag.outputs.tag }}
-
-    - name: Checkout repo head
-      env:
-        REF: ${{ github.ref }}
-      run: |
-          git fetch origin ${REF#refs/heads/}
-          git checkout FETCH_HEAD
-          git log --decorate=on
-
-    - name: Zstd
-      run: sed -i 's/tar\.xz/tar.zst/' /etc/makepkg.conf
-
-    - name: chown
-      run: chown --recursive aur pkg/arch
-
-    - name: makepkg
-      working-directory: ./pkg/arch
-      run: |
-          export MAKEFLAGS=-j$(nproc)
-          sudo -Eu aur makepkg -s --noconfirm
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: arch_package
-        path: pkg/arch/*.pkg.tar.*
