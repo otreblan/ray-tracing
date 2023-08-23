@@ -14,9 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "dielectric.hpp"
 
-#include "material/dielectric.hpp"
-#include "material/lambertian.hpp"
-#include "material/material.hpp"
-#include "material/metal.hpp"
+#include "../camera.hpp"
+#include "../hittable.hpp"
+#include "../ray.hpp"
+#include "../rtweekend.hpp"
+
+bool dielectric::scatter(const ray& r_in, const hit_record& rec, glm::vec3& attenutation, ray& scattered) const
+{
+	attenutation = glm::vec3(1.f, 1.f, 1.f);
+	float refraction_ratio = rec.front_face ? (1.f/ir) : ir;
+
+	glm::vec3 unit_direction = glm::normalize(r_in.direction);
+	glm::vec3 refracted = glm::refract(unit_direction, rec.normal, refraction_ratio);
+
+	scattered = ray(rec.p, refracted);
+	return true;
+}

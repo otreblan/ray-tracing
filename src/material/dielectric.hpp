@@ -16,7 +16,27 @@
 
 #pragma once
 
-#include "material/dielectric.hpp"
-#include "material/lambertian.hpp"
-#include "material/material.hpp"
-#include "material/metal.hpp"
+#include "material.hpp"
+
+#include <glm/vec3.hpp>
+
+#include <cmath>
+
+class dielectric: public material
+{
+public:
+	float ir;
+
+	dielectric(float index_of_refraction):
+		ir(index_of_refraction)
+	{};
+
+	bool scatter(
+		const ray& r_in,
+		const hit_record& rec,
+		glm::vec3& attenutation,
+		ray& scattered
+	) const override;
+
+	virtual ~dielectric() = default;
+};

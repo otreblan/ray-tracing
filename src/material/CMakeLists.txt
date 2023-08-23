@@ -16,6 +16,7 @@
 
 target_sources(${PROJECT_NAME}
 	PRIVATE
+		dielectric.cpp
 		lambertian.cpp
 		metal.cpp
 )
