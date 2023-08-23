@@ -38,34 +38,20 @@ set_target_properties(${PROJECT_NAME}
 		CXX_STANDARD 20
 )
 
-# Headers
-target_include_directories(${PROJECT_NAME}
-	PRIVATE
-		${PROJECT_SOURCE_DIR}/include
-)
-
 add_subdirectory(src) # Sources list
 add_subdirectory(pkg) # Packaging
 
 # Shared libraries
-pkg_check_modules(shared
+pkg_check_modules(libraries
 	REQUIRED IMPORTED_TARGET
 		fmt
-)
-
-# Header only libraries
-pkg_check_modules(header_only
-	REQUIRED IMPORTED_TARGET
 		glm
 )
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
-		PkgConfig::shared
-
-	INTERFACE
-		PkgConfig::header_only
+		PkgConfig::libraries
 )
 
 # Default flags
