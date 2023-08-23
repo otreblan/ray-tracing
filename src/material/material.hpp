@@ -16,38 +16,18 @@
 
 #pragma once
 
-#include "camera.hpp"
-#include "hittable.hpp"
-#include "material.hpp"
-#include "ray.hpp"
-
 #include <glm/vec3.hpp>
 
-class lambertian: public material
+struct hit_record;
+struct ray;
+
+class material
 {
 public:
-	glm::vec3 albedo;
-
-	lambertian(glm::vec3 albedo):
-		albedo(albedo)
-	{};
-
 	virtual bool scatter(
-		const ray&,
+		const ray& r_in,
 		const hit_record& rec,
 		glm::vec3& attenutation,
 		ray& scattered
-	) const override
-	{
-		glm::vec3 scatter_direction = rec.normal + glm::sphericalRand(1.f);
-
-		// Catch degenerate scatter direction
-		if(near_zero(scatter_direction))
-			scatter_direction = rec.normal;
-
-		scattered = ray(rec.p, scatter_direction);
-		attenutation = albedo;
-
-		return true;
-	}
+	) const = 0;
 };

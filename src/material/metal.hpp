@@ -16,6 +16,28 @@
 
 #pragma once
 
-#include "material/lambertian.hpp"
-#include "material/material.hpp"
-#include "material/metal.hpp"
+#include "material.hpp"
+
+#include <glm/vec3.hpp>
+
+#include <cmath>
+
+class metal: public material
+{
+public:
+	glm::vec3 albedo;
+	float fuzz;
+
+	metal(glm::vec3 albedo, float f):
+		albedo(albedo),
+		fuzz(std::min(f, 1.f))
+	{};
+
+	bool scatter(
+		const ray& r_in,
+		const hit_record& rec,
+		glm::vec3& attenutation,
+		ray& scattered
+	) const override;
+
+};

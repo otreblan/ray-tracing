@@ -14,8 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "lambertian.hpp"
 
-#include "material/lambertian.hpp"
-#include "material/material.hpp"
-#include "material/metal.hpp"
+#include "../camera.hpp"
+#include "../hittable.hpp"
+#include "../ray.hpp"
+#include "../rtweekend.hpp"
+
+bool lambertian::scatter(const ray&, const hit_record& rec, glm::vec3& attenutation, ray& scattered) const
+{
+	glm::vec3 scatter_direction = rec.normal + glm::sphericalRand(1.f);
+
+	// Catch degenerate scatter direction
+	if(near_zero(scatter_direction))
+		scatter_direction = rec.normal;
+
+	scattered = ray(rec.p, scatter_direction);
+	attenutation = albedo;
+
+	return true;
+}

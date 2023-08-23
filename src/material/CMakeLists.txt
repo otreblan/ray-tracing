@@ -16,9 +16,6 @@
 
 target_sources(${PROJECT_NAME}
 	PRIVATE
-		hittable_list.cpp
-		main.cpp
-		sphere.cpp
+		lambertian.cpp
+		metal.cpp
 )
-
-add_subdirectory(material)

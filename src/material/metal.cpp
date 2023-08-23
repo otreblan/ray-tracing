@@ -14,8 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "metal.hpp"
 
-#include "material/lambertian.hpp"
-#include "material/material.hpp"
-#include "material/metal.hpp"
+#include "../camera.hpp"
+#include "../hittable.hpp"
+#include "../ray.hpp"
+#include "../rtweekend.hpp"
+
+bool metal::scatter(const ray& r_in, const hit_record& rec, glm::vec3& attenutation, ray& scattered) const
+{
+	glm::vec3 reflected = glm::reflect(glm::normalize(r_in.direction), rec.normal);
+	scattered = ray(rec.p, reflected + fuzz*glm::ballRand(1.f));
+	attenutation = albedo;
+
+	return glm::dot(scattered.direction, rec.normal) > 0.f;
+}
