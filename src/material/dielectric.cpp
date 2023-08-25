@@ -26,8 +26,22 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, glm::vec3& atte
 	float refraction_ratio = rec.front_face ? (1.f/ir) : ir;
 
 	glm::vec3 unit_direction = glm::normalize(r_in.direction);
-	glm::vec3 refracted = glm::refract(unit_direction, rec.normal, refraction_ratio);
+	glm::vec3 direction;
 
-	scattered = ray(rec.p, refracted);
+	float cos_theta = fmin(dot(-unit_direction, rec.normal), 1.f);
+	float sin_theta = sqrt(1.f - cos_theta*cos_theta);
+
+	bool cannot_refract = refraction_ratio * sin_theta > 1.f;
+
+	if(cannot_refract)
+	{
+		direction = glm::reflect(unit_direction, rec.normal);
+	}
+	else
+	{
+		direction = glm::refract(unit_direction, rec.normal, refraction_ratio);
+	}
+
+	scattered = ray(rec.p, direction);
 	return true;
 }

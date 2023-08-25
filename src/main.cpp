@@ -72,9 +72,9 @@ int main()
 	hittable_list world;
 
 	auto material_ground = std::make_shared<lambertian>(glm::vec3(0.8f, 0.8f, 0.f));
-	auto material_center = std::make_shared<dielectric>(1.5f);
+	auto material_center = std::make_shared<lambertian>(glm::vec3(0.1f, 0.2f, 0.5f));
 	auto material_left = std::make_shared<dielectric>(1.5f);
-	auto material_right = std::make_shared<metal>(glm::vec3(0.8f, 0.6f, 0.2f), 1.f);
+	auto material_right = std::make_shared<metal>(glm::vec3(0.8f, 0.6f, 0.2f), 0.f);
 
 	world.add<sphere>(glm::vec3(0.f,  -100.5f, -1.f), 100.f, material_ground);
 	world.add<sphere>(glm::vec3(0.f,  0.f,     -1.f), 0.5f, material_center);
