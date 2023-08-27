@@ -48,10 +48,21 @@ pkg_check_modules(libraries
 		glm
 )
 
+find_package(embree 4)
+
+if(NOT embree_FOUND)
+	find_package(embree 3)
+	target_compile_definitions(${PROJECT_NAME}
+		PRIVATE
+			LEGACY_EMBREE
+	)
+endif()
+
 # Linking
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::libraries
+		embree
 )
 
 # Default flags

@@ -8,6 +8,7 @@ https://raytracing.github.io/
 ## Dependencies
 
 * `cmake`
+* `libembree-dev`
 * `libfmt-dev`
 * `libgml-dev`
 
