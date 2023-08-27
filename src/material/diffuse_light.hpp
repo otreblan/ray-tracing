@@ -16,41 +16,28 @@
 
 #pragma once
 
-#include <memory>
+#include "material.hpp"
 
-#include <glm/geometric.hpp>
+#include <glm/vec3.hpp>
 
-#include "embree.hpp"
-#include "ray.hpp"
+#include <cmath>
 
-class material;
-
-struct hit_record
+class diffuse_light: public material
 {
 private:
-	RTCRayHit rayHit;
-	// TODO: Wrap embree's rayhit
+	glm::vec3 color;
 
 public:
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
+	diffuse_light(glm::vec3 color);
 
-	float get_u() const {return rayHit.hit.u;}
-	float get_v() const {return rayHit.hit.v;}
-	glm::vec3 get_p() const
-	{
-		// TODO: Evaluate orig.at(tfar)
-		return p;
-	}
-};
+	bool scatter(
+		const ray& r_in,
+		const hit_record& rec,
+		glm::vec3& attenutation,
+		ray& scattered
+	) const override;
 
-class hittable
-{
-public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+	glm::vec3 emitted(float u, float v, const glm::vec3& p) const override;
 
-	virtual ~hittable() = default;
+	virtual ~diffuse_light() = default;
 };

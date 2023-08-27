@@ -17,6 +17,7 @@
 #pragma once
 
 #include "material/dielectric.hpp"
+#include "material/diffuse_light.hpp"
 #include "material/lambertian.hpp"
 #include "material/material.hpp"
 #include "material/metal.hpp"

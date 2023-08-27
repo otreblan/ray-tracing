@@ -16,41 +16,8 @@
 
 #pragma once
 
-#include <memory>
-
-#include <glm/geometric.hpp>
-
-#include "embree.hpp"
-#include "ray.hpp"
-
-class material;
-
-struct hit_record
-{
-private:
-	RTCRayHit rayHit;
-	// TODO: Wrap embree's rayhit
-
-public:
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
-
-	float get_u() const {return rayHit.hit.u;}
-	float get_v() const {return rayHit.hit.v;}
-	glm::vec3 get_p() const
-	{
-		// TODO: Evaluate orig.at(tfar)
-		return p;
-	}
-};
-
-class hittable
-{
-public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
-
-	virtual ~hittable() = default;
-};
+#ifdef LEGACY_EMBREE
+#include <embree3/rtcore.h>
+#else
+#include <embree4/rtcore.h>
+#endif

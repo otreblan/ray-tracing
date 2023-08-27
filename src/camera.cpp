@@ -26,24 +26,23 @@ glm::vec3 camera::ray_color(const ray& r, const hittable& world, int depth)
 {
 	hit_record rec;
 
+	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if(depth <= 0)
 		return glm::vec3(0.f);
 
-	if(world.hit(r, 0.001f, HUGE_VALF, rec))
-	{
-		ray scattered;
-		glm::vec3 attenuation;
+	// If the ray hits nothing, return the background
+	if(!world.hit(r, 0.001f, HUGE_VALF, rec))
+		return background;
 
-		if(rec.mat_ptr && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-			return attenuation * ray_color(scattered, world, depth-1);
+	ray scattered;
+	glm::vec3 attenuation;
+	glm::vec3 color_from_emission = rec.mat_ptr->emitted(rec.get_u(), rec.get_v(), rec.get_p());
 
-		return glm::vec3(0.f);
-	}
+	// If the ray hits, it bounces
+	if(rec.mat_ptr && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+		return attenuation * ray_color(scattered, world, depth-1) + color_from_emission;
 
-	// Background
-	glm::vec3 unit_direction = glm::normalize(r.get_direction());
-	float t = 0.5f*(unit_direction.y + 1.f);
-	return glm::lerp(glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.5f, 0.7f, 1.f), t);
+	return color_from_emission;
 }
 
 ray camera::get_ray(int i, int j) const
@@ -104,7 +103,8 @@ camera::camera(
 		float vfov,
 		glm::vec3 lookfrom,
 		glm::vec3 lookat,
-		glm::vec3 vup
+		glm::vec3 vup,
+		glm::vec3 background
 		):
 	image_width(image_width),
 	image_height(image_height),
@@ -115,6 +115,7 @@ camera::camera(
 	lookfrom(lookfrom),
 	lookat(lookat),
 	vup(vup),
+	background(background),
 	center(lookfrom)
 {
 	// Determine viewport dimensions.

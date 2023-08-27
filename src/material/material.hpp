@@ -31,5 +31,7 @@ public:
 		ray& scattered
 	) const = 0;
 
+	virtual glm::vec3 emitted(float u, float v, const glm::vec3& p) const;
+
 	virtual ~material() = default;
 };

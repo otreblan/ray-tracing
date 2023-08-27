@@ -16,11 +16,7 @@
 
 #pragma once
 
-#ifdef LEGACY_EMBREE
-#include <embree3/rtcore_ray.h>
-#else
-#include <embree4/rtcore_ray.h>
-#endif
+#include "embree.hpp"
 
 #include <glm/vec3.hpp>
 

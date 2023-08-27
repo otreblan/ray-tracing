@@ -14,43 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "diffuse_light.hpp"
 
-#include <memory>
+#include "../hittable.hpp"
+#include "../ray.hpp"
+#include "../rtweekend.hpp"
 
-#include <glm/geometric.hpp>
+diffuse_light::diffuse_light(glm::vec3 color):
+	color(color)
+{};
 
-#include "embree.hpp"
-#include "ray.hpp"
-
-class material;
-
-struct hit_record
+bool diffuse_light::scatter(const ray&, const hit_record&, glm::vec3&, ray&) const
 {
-private:
-	RTCRayHit rayHit;
-	// TODO: Wrap embree's rayhit
+	return false;
+}
 
-public:
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
-
-	float get_u() const {return rayHit.hit.u;}
-	float get_v() const {return rayHit.hit.v;}
-	glm::vec3 get_p() const
-	{
-		// TODO: Evaluate orig.at(tfar)
-		return p;
-	}
-};
-
-class hittable
+glm::vec3 diffuse_light::emitted(float, float, const glm::vec3&) const
 {
-public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
-
-	virtual ~hittable() = default;
-};
+	return color;
+}

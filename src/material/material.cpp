@@ -14,43 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "material.hpp"
 
-#include <memory>
-
-#include <glm/geometric.hpp>
-
-#include "embree.hpp"
-#include "ray.hpp"
-
-class material;
-
-struct hit_record
+glm::vec3 material::emitted(float, float, const glm::vec3&) const
 {
-private:
-	RTCRayHit rayHit;
-	// TODO: Wrap embree's rayhit
-
-public:
-	glm::vec3 p;
-	glm::vec3 normal;
-	std::shared_ptr<material> mat_ptr;
-	float t;
-	bool front_face;
-
-	float get_u() const {return rayHit.hit.u;}
-	float get_v() const {return rayHit.hit.v;}
-	glm::vec3 get_p() const
-	{
-		// TODO: Evaluate orig.at(tfar)
-		return p;
-	}
-};
-
-class hittable
-{
-public:
-	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
-
-	virtual ~hittable() = default;
-};
+	return {0,0,0};
+}

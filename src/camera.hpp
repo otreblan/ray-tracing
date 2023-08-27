@@ -38,6 +38,8 @@ private:
 	glm::vec3 lookat;   // Point camera is looking at
 	glm::vec3 vup;      // Camera-relative "up" direction
 
+	glm::vec3 background;
+
 	glm::vec3 center;         // Camera center
 	glm::vec3 pixel00_loc;    // Location of pixel 0, 0
 	glm::vec3 pixel_delta_u;  // Offset to pixel to the right
@@ -59,7 +61,8 @@ public:
 		float vfov,
 		glm::vec3 lookfrom,
 		glm::vec3 lookat,
-		glm::vec3 vup
+		glm::vec3 vup,
+		glm::vec3 background
 	);
 
 	void render(const hittable& world);
