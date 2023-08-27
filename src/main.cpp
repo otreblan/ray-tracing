@@ -24,6 +24,7 @@
 #include <glm/geometric.hpp>
 #include <glm/gtx/compatibility.hpp>
 
+#include "arguments.hpp"
 #include "camera.hpp"
 #include "hittable.hpp"
 #include "hittable_list.hpp"
@@ -57,16 +58,18 @@ glm::vec3 ray_color(const ray& r, const hittable& world, int depth)
 	return glm::lerp(glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.5f, 0.7f, 1.f), t);
 }
 
-int main()
+int main(int argc, char** argv)
 {
 	bool stdout_tty = isatty(STDOUT_FILENO);
 
+	arguments args(argc, argv);
+
 	// Image
-	const float aspect_ratio = 16.f/9.f;
-	const int image_width = 400;
-	const int image_height = image_width/aspect_ratio;
-	const int samples_per_pixel = 100;
-	const int max_depth = 50;
+	const int   image_width       = args.get_image_width();
+	const int   image_height      = args.get_image_height();
+	const float aspect_ratio      = args.get_aspect_ratio();
+	const int   samples_per_pixel = args.get_samples_per_pixel();
+	const int   max_depth         = args.get_max_depth();
 
 	// World
 	hittable_list world;
