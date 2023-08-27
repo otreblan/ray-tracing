@@ -96,31 +96,48 @@ void camera::render(const hittable& world)
 		fmt::print(stderr, "\n");
 }
 
-camera::camera(int image_width, int image_height, int samples_per_pixel, int max_depth, float vfov):
+camera::camera(
+		int image_width,
+		int image_height,
+		int samples_per_pixel,
+		int max_depth,
+		float vfov,
+		glm::vec3 lookfrom,
+		glm::vec3 lookat,
+		glm::vec3 vup
+		):
 	image_width(image_width),
 	image_height(image_height),
 	aspect_ratio((float)image_width/image_height),
 	samples_per_pixel(samples_per_pixel),
 	max_depth(max_depth),
 	vfov(vfov),
-	center(0,0,0)
+	lookfrom(lookfrom),
+	lookat(lookat),
+	vup(vup),
+	center(lookfrom)
 {
 	// Determine viewport dimensions.
-	float focal_length = 1.f;
+	float focal_length = (lookfrom-lookat).length();
 	float theta = degrees_to_radians(vfov);
 	float h = tan(theta/2);
 	float viewport_height = 2.f * h * focal_length;
 	float viewport_width = viewport_height * (float)image_width/image_height;
 
+	// Calculate the u,v,w unit basis vectors for the camera coordinate frame.
+	w = glm::normalize(lookfrom - lookat);
+	u = glm::normalize(glm::cross(vup, w));
+	v = cross(w, u);
+
 	// Calculate the vectors across the horizontal and down the vertical viewport edges.
-	glm::vec3 viewport_u(viewport_width, 0, 0);
-	glm::vec3 viewport_v(0, -viewport_height, 0);
+	glm::vec3 viewport_u(viewport_width*u);
+	glm::vec3 viewport_v(viewport_height*-v);
 
 	// Calculate the horizontal and vertical delta vectors from pixel to pixel.
 	pixel_delta_u = viewport_u / (float)image_width;
 	pixel_delta_v = viewport_v / (float)image_height;
 
 	// Calculate the location of the upper left pixel.
-	glm::vec3 viewport_upper_left = center - glm::vec3(0, 0, focal_length) - viewport_u/2.f - viewport_v/2.f;
+	glm::vec3 viewport_upper_left(center - focal_length*w - viewport_u/2.f - viewport_v/2.f);
 	pixel00_loc = viewport_upper_left + 0.5f * (pixel_delta_u + pixel_delta_v);
 }

@@ -33,12 +33,16 @@ private:
 	int samples_per_pixel;
 	int max_depth;
 
-	float vfov;
+	float vfov;         // Vertical view angle (field of view)
+	glm::vec3 lookfrom; // Point camera is looking from
+	glm::vec3 lookat;   // Point camera is looking at
+	glm::vec3 vup;      // Camera-relative "up" direction
 
 	glm::vec3 center;         // Camera center
 	glm::vec3 pixel00_loc;    // Location of pixel 0, 0
 	glm::vec3 pixel_delta_u;  // Offset to pixel to the right
 	glm::vec3 pixel_delta_v;  // Offset to pixel below
+	glm::vec3 u, v, w;        // Camera frame basis vectors
 
 	glm::vec3 ray_color(const ray& r, const hittable& world, int depth);
 
@@ -47,7 +51,16 @@ private:
 	glm::vec3 pixel_sample_square() const;
 
 public:
-	camera(int image_width, int image_height, int samples_per_pixel, int max_depth, float vfov);
+	camera(
+		int image_width,
+		int image_height,
+		int samples_per_pixel,
+		int max_depth,
+		float vfov,
+		glm::vec3 lookfrom,
+		glm::vec3 lookat,
+		glm::vec3 vup
+	);
 
 	void render(const hittable& world);
 };
