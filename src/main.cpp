@@ -22,6 +22,7 @@
 #include "hittable_list.hpp"
 #include "material.hpp"
 #include "sphere.hpp"
+#include "rtweekend.hpp"
 
 int main(int argc, char** argv)
 {
@@ -47,7 +48,7 @@ int main(int argc, char** argv)
 	for(int i = 0; i < n; i++)
 	{
 		glm::vec3 pos(0,0,3);
-		pos = glm::rotateY(pos, std::lerp(0.f, 360.f, (float)i/n));
+		pos = glm::rotateY(pos, std::lerp(0.f, degrees_to_radians(360), (float)i/n));
 
 		world.add<sphere>(glm::vec3(0,1,-1)+pos, 0.1f, material_light);
 	}
