@@ -79,6 +79,7 @@ int main()
 	world.add<sphere>(glm::vec3(0.f,  -100.5f, -1.f), 100.f, material_ground);
 	world.add<sphere>(glm::vec3(0.f,  0.f,     -1.f), 0.5f, material_center);
 	world.add<sphere>(glm::vec3(-1.f, 0.f,     -1.f), 0.5f, material_left);
+	world.add<sphere>(glm::vec3(-1.f, 0.f,     -1.f), -0.4f, material_left);
 	world.add<sphere>(glm::vec3(1.f,  0.f,     -1.f), 0.5f, material_right);
 
 	// Camera
