@@ -15,6 +15,7 @@
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <glm/vec3.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include "arguments.hpp"
 #include "camera.hpp"
@@ -41,6 +42,15 @@ int main(int argc, char** argv)
 	world.add<sphere>(glm::vec3(-1.f, 0.f,     -1.f), -0.4f, material_left);
 	world.add<sphere>(glm::vec3(1.f,  0.f,     -1.f), 0.5f, material_right);
 	world.add<sphere>(glm::vec3(0.f,  1.f,     -1.f), 0.5f, material_light);
+
+	int n = 50;
+	for(int i = 0; i < n; i++)
+	{
+		glm::vec3 pos(0,0,3);
+		pos = glm::rotateY(pos, std::lerp(0.f, 360.f, (float)i/n));
+
+		world.add<sphere>(glm::vec3(0,1,-1)+pos, 0.1f, material_light);
+	}
 
 	camera cam(
 		args.image_width,
