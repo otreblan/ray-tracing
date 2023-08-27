@@ -33,7 +33,7 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, glm::vec3& atte
 
 	bool cannot_refract = refraction_ratio * sin_theta > 1.f;
 
-	if(cannot_refract)
+	if(cannot_refract || reflectance(cos_theta, refraction_ratio) > random_float())
 	{
 		direction = glm::reflect(unit_direction, rec.normal);
 	}
@@ -44,4 +44,12 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, glm::vec3& atte
 
 	scattered = ray(rec.p, direction);
 	return true;
+}
+
+double dielectric::reflectance(float cosine, float ref_idx)
+{
+	// Use Schlick's approximation for reflectance.
+	float r0 = (1-ref_idx) / (1+ref_idx);
+	r0 = r0*r0;
+	return r0 + (1-r0)*pow((1 - cosine),5);
 }

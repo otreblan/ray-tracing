@@ -24,8 +24,11 @@
 
 class dielectric: public material
 {
-public:
+private:
 	float ir;
+
+	static double reflectance(float cosine, float ref_idx);
+public:
 
 	dielectric(float index_of_refraction):
 		ir(index_of_refraction)
