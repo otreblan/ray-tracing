@@ -25,7 +25,7 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, glm::vec3& atte
 	attenutation = glm::vec3(1.f, 1.f, 1.f);
 	float refraction_ratio = rec.front_face ? (1.f/ir) : ir;
 
-	glm::vec3 unit_direction = glm::normalize(r_in.direction);
+	glm::vec3 unit_direction = glm::normalize(r_in.get_direction());
 	glm::vec3 direction;
 
 	float cos_theta = fmin(dot(-unit_direction, rec.normal), 1.f);

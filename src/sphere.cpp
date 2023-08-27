@@ -22,10 +22,10 @@
 
 bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 {
-	glm::vec3 oc = r.origin - center;
+	glm::vec3 oc = r.get_origin() - center;
 
-	float a      = glm::dot(r.direction, r.direction);
-	float half_b = glm::dot(oc, r.direction);
+	float a      = glm::dot(r.get_direction(), r.get_direction());
+	float half_b = glm::dot(oc, r.get_direction());
 	float c      = glm::dot(oc, oc) - radius*radius;
 
 	float discriminant = half_b*half_b - a*c;
@@ -49,7 +49,7 @@ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 
 	glm::vec3 outward_normal = (rec.p - center) / radius;
 
-	rec.normal = glm::faceforward(outward_normal, outward_normal, r.direction);
+	rec.normal = glm::faceforward(outward_normal, outward_normal, r.get_direction());
 	rec.front_face = rec.normal == outward_normal;
 	rec.mat_ptr = mat_ptr;
 

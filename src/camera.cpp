@@ -41,7 +41,7 @@ glm::vec3 camera::ray_color(const ray& r, const hittable& world, int depth)
 	}
 
 	// Background
-	glm::vec3 unit_direction = glm::normalize(r.direction);
+	glm::vec3 unit_direction = glm::normalize(r.get_direction());
 	float t = 0.5f*(unit_direction.y + 1.f);
 	return glm::lerp(glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.5f, 0.7f, 1.f), t);
 }

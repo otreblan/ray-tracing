@@ -16,23 +16,34 @@
 
 #pragma once
 
-#include <utility>
+#ifdef LEGACY_EMBREE
+#include <embree3/rtcore_ray.h>
+#else
+#include <embree4/rtcore_ray.h>
+#endif
 
 #include <glm/vec3.hpp>
 
-struct ray
+class ray
 {
-	ray(){};
-	ray(glm::vec3 origin, glm::vec3 direction):
-		origin(std::move(origin)),
-		direction(std::move(direction))
-	{};
+private:
+	RTCRay _ray;
 
-	glm::vec3 at(float t) const
-	{
-		return origin + t*direction;
-	}
+public:
+	ray();
 
-	glm::vec3 origin;
-	glm::vec3 direction;
+	ray(RTCRay _ray);
+
+	ray(glm::vec3 origin, glm::vec3 direction);
+
+	RTCRay& get();
+	const RTCRay& get() const;
+
+	glm::vec3 at(float t) const;
+
+	glm::vec3 get_origin() const;
+	glm::vec3 get_direction() const;
+
+	void set_origin(glm::vec3 origin);
+	void set_direction(glm::vec3 direction);
 };
