@@ -28,17 +28,11 @@ private:
 	[[noreturn]]
 	void usage(int exit_code) const;
 
+public:
 	int image_width       = 400;
 	int image_height      = 225;
 	int samples_per_pixel = 100;
 	int max_depth         = 50;
-
-public:
-	int   get_image_width()       const {return image_width;}
-	int   get_image_height()      const {return image_height;}
-	float get_aspect_ratio()      const {return (float)image_width/image_height;}
-	int   get_samples_per_pixel() const {return samples_per_pixel;}
-	int   get_max_depth()         const {return max_depth;}
 
 	arguments(int argc, char** argv);
 };

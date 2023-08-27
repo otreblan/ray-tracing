@@ -21,31 +21,32 @@
 
 #include "ray.hpp"
 
+class hittable;
+
 class camera
 {
 private:
-	glm::vec3 origin;
-	glm::vec3 horizontal;
-	glm::vec3 vertical;
-	glm::vec3 lower_left_corner;
+	int   image_width;
+	int   image_height;
+	float aspect_ratio;
+	int   samples_per_pixel;
+	int   max_depth;
+
+	glm::vec3 center;         // Camera center
+	glm::vec3 pixel00_loc;    // Location of pixel 0, 0
+	glm::vec3 pixel_delta_u;  // Offset to pixel to the right
+	glm::vec3 pixel_delta_v;  // Offset to pixel below
+
+	glm::vec3 ray_color(const ray& r, const hittable& world, int depth);
+
+	ray get_ray(int i, int j) const;
+
+	glm::vec3 pixel_sample_square() const;
 
 public:
-	camera(float viewport_height, float viewport_width, float focal_length = 1.f):
-		origin(0.f, 0.f, 0.f),
-		horizontal(viewport_width, 0.f, 0.f),
-		vertical(0.f, viewport_height, 0.f),
-		lower_left_corner(
-			origin -
-			horizontal/2.f -
-			vertical/2.f -
-			glm::vec3(0.f, 0.f, focal_length)
-		)
-	{};
+	camera(int image_width, int image_height, int samples_per_pixel, int max_depth);
 
-	ray get_ray(float u, float v) const
-	{
-		return {origin, lower_left_corner + u*horizontal + v*vertical - origin};
-	}
+	void render(const hittable& world);
 };
 
 class sampled_color
