@@ -62,3 +62,8 @@ constexpr bool near_zero(const glm::vec3& v)
 	constexpr float s = 1e-8f;
 	return glm::all(glm::lessThan(glm::abs(v), glm::vec3(s)));
 }
+
+constexpr float degrees_to_radians(float degrees)
+{
+	return degrees * std::numbers::pi_v<float>/180;
+}

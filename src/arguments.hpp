@@ -33,6 +33,7 @@ public:
 	int image_height      = 225;
 	int samples_per_pixel = 100;
 	int max_depth         = 50;
+	float vfov            = 90;
 
 	arguments(int argc, char** argv);
 };

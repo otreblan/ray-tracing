@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	world.add<sphere>(glm::vec3(-1.f, 0.f,     -1.f), -0.4f, material_left);
 	world.add<sphere>(glm::vec3(1.f,  0.f,     -1.f), 0.5f, material_right);
 
-	camera cam(args.image_width, args.image_height, args.samples_per_pixel, args.max_depth);
+	camera cam(args.image_width, args.image_height, args.samples_per_pixel, args.max_depth, args.vfov);
 
 	cam.render(world);
 

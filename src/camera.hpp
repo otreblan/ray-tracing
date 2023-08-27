@@ -29,8 +29,11 @@ private:
 	int   image_width;
 	int   image_height;
 	float aspect_ratio;
-	int   samples_per_pixel;
-	int   max_depth;
+
+	int samples_per_pixel;
+	int max_depth;
+
+	float vfov;
 
 	glm::vec3 center;         // Camera center
 	glm::vec3 pixel00_loc;    // Location of pixel 0, 0
@@ -44,7 +47,7 @@ private:
 	glm::vec3 pixel_sample_square() const;
 
 public:
-	camera(int image_width, int image_height, int samples_per_pixel, int max_depth);
+	camera(int image_width, int image_height, int samples_per_pixel, int max_depth, float vfov);
 
 	void render(const hittable& world);
 };

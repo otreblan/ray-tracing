@@ -29,6 +29,7 @@ void arguments::usage(int exit_code) const
 		<< "\t-H, --image-heigth=N       Images height in pixels.\n"
 		<< "\t-s, --samples-per-pixel=N  Ray samples per pixel.\n"
 		<< "\t-d, --max-depth=N          Max ray depth.\n"
+		<< "\t-f, --vfov=N               Vertical FOV in degrees.\n"
 		;
 
 	exit(exit_code);
@@ -40,7 +41,7 @@ arguments::arguments(int argc, char** argv):
 {
 	int c;
 
-	static const char shortopts[] = "hw:H:s:d:";
+	static const char shortopts[] = "hw:H:s:d:f:";
 	static const option options[] =
 	{
 		{"help",              no_argument,       nullptr, 'h'},
@@ -48,6 +49,7 @@ arguments::arguments(int argc, char** argv):
 		{"image-height",      required_argument, nullptr, 'H'},
 		{"samples-per-pixel", required_argument, nullptr, 's'},
 		{"max-depth",         required_argument, nullptr, 'd'},
+		{"vfov",              required_argument, nullptr, 'f'},
 		{nullptr,             0,                 nullptr, 0},
 	};
 
@@ -73,6 +75,10 @@ arguments::arguments(int argc, char** argv):
 
 			case 'd':
 				max_depth = atoi(optarg);
+				break;
+
+			case 'f':
+				vfov = atof(optarg);
 				break;
 
 			case '?':

@@ -96,17 +96,20 @@ void camera::render(const hittable& world)
 		fmt::print(stderr, "\n");
 }
 
-camera::camera(int image_width, int image_height, int samples_per_pixel, int max_depth):
+camera::camera(int image_width, int image_height, int samples_per_pixel, int max_depth, float vfov):
 	image_width(image_width),
 	image_height(image_height),
 	aspect_ratio((float)image_width/image_height),
 	samples_per_pixel(samples_per_pixel),
 	max_depth(max_depth),
+	vfov(vfov),
 	center(0,0,0)
 {
 	// Determine viewport dimensions.
 	float focal_length = 1.f;
-	float viewport_height = 2.f;
+	float theta = degrees_to_radians(vfov);
+	float h = tan(theta/2);
+	float viewport_height = 2.f * h * focal_length;
 	float viewport_width = viewport_height * (float)image_width/image_height;
 
 	// Calculate the vectors across the horizontal and down the vertical viewport edges.
