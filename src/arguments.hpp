@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <utility>
 
 class arguments
@@ -34,6 +35,8 @@ public:
 	int samples_per_pixel = 100;
 	int max_depth         = 50;
 	float vfov            = 90;
+
+	std::filesystem::path scene;
 
 	arguments(int argc, char** argv);
 };
