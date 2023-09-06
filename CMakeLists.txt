@@ -44,6 +44,7 @@ add_subdirectory(pkg) # Packaging
 # Shared libraries
 pkg_check_modules(libraries
 	REQUIRED IMPORTED_TARGET
+		assimp
 		fmt
 		glm
 )

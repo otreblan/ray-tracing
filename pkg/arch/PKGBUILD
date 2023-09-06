@@ -1,7 +1,7 @@
 # Maintainer: Otreblan <otreblain@gmail.com>
 
 pkgname=ray-tracing-git
-pkgver=0.0.0.r38.g0a2f16d
+pkgver=0.0.0.r41.g52a05d4
 pkgrel=1
 epoch=
 pkgdesc="Ray tracing"
@@ -9,7 +9,7 @@ arch=('x86_64')
 url="https://github.com/otreblan/ray-tracing"
 license=('GPL3')
 groups=()
-depends=('gcc-libs' 'fmt' 'embree')
+depends=('gcc-libs' 'fmt' 'embree' 'assimp')
 makedepends=('git' 'cmake' 'glm')
 checkdepends=()
 optdepends=()

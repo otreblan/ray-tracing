@@ -15,7 +15,7 @@ jobs:
     - uses: ammaraskar/gcc-problem-matcher@master
 
     - name: deps
-      run: sudo apt install libfmt-dev libglm-dev libembree-dev
+      run: sudo apt install libfmt-dev libglm-dev libembree-dev libassimp-dev
 
     - name: configure
       run: cmake

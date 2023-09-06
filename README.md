@@ -8,15 +8,14 @@ https://raytracing.github.io/
 ## Dependencies
 
 * `cmake`
+* `libassimp-dev`
 * `libembree-dev`
 * `libfmt-dev`
 * `libgml-dev`
+* `pkgconf`
 
 ## Build
 ``` bash
-mkdir -p build
-cd build
-
-cmake ..
-make
+cmake -B build
+cmake --build build
 ```
