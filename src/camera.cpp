@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <assimp/camera.h>
 #include <glm/gtx/compatibility.hpp>
 
 #include "camera.hpp"
@@ -142,3 +143,24 @@ camera::camera(
 	glm::vec3 viewport_upper_left(center - focal_length*w - viewport_u/2.f - viewport_v/2.f);
 	pixel00_loc = viewport_upper_left + 0.5f * (pixel_delta_u + pixel_delta_v);
 }
+
+camera::camera(
+	int image_width,
+	int image_height,
+	int samples_per_pixel,
+	int max_depth,
+	const aiCamera& c,
+	glm::vec3 background
+	):
+	camera(
+		image_width,
+		image_height,
+		samples_per_pixel,
+		max_depth,
+		c.mHorizontalFOV,
+		to_glm(c.mPosition),
+		to_glm(c.mLookAt),
+		to_glm(c.mUp),
+		background
+	)
+{}

@@ -18,9 +18,15 @@
 
 #include <random>
 
+#include <assimp/vector3.h>
 #include <glm/vec3.hpp>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/compatibility.hpp>
+
+inline glm::vec3 to_glm(aiVector3D v)
+{
+	return {v.x, v.y, v.z};
+}
 
 inline float random_float()
 {

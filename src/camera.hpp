@@ -22,6 +22,7 @@
 #include "ray.hpp"
 
 class hittable;
+struct aiCamera;
 
 class camera
 {
@@ -64,6 +65,8 @@ public:
 		glm::vec3 vup,
 		glm::vec3 background
 	);
+
+	camera(int image_width, int image_height, int samples_per_pixel, int max_depth, const aiCamera& c, glm::vec3 background);
 
 	void render(const hittable& world);
 };
