@@ -19,9 +19,12 @@
 #include <random>
 
 #include <assimp/vector3.h>
-#include <glm/vec3.hpp>
+#include <embree4/rtcore.h>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/compatibility.hpp>
+#include <glm/vec3.hpp>
+
+void errorFunction(void* userPtr, enum RTCError error, const char* str);
 
 inline glm::vec3 to_glm(aiVector3D v)
 {

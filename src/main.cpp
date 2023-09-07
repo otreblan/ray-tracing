@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <glm/vec3.hpp>
+#include <embree4/rtcore.h>
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/vec3.hpp>
 
 #include "arguments.hpp"
 #include "camera.hpp"
@@ -28,6 +29,13 @@
 
 int main(int argc, char** argv)
 {
+	RTCDevice device = rtcNewDevice(nullptr);
+
+	if(!device)
+		return EXIT_FAILURE;
+
+	rtcSetDeviceErrorFunction(device, errorFunction, nullptr);
+
 	arguments args(argc, argv);
 
 	// World
@@ -85,9 +93,11 @@ int main(int argc, char** argv)
 	);
 
 	// TODO: Render from main_scene
-	scene main_scene(args);
+	scene main_scene(device, args);
 
 	cam.render(world);
 
+
+	rtcReleaseDevice(device);
 	return EXIT_SUCCESS;
 }

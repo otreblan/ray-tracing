@@ -23,8 +23,9 @@
 
 #include <iostream>
 
-scene::scene(const arguments& args):
+scene::scene(RTCDevice device, const arguments& args):
 	scene(
+		device,
 		args.scene,
 		args.image_width,
 		args.image_height,
@@ -34,13 +35,15 @@ scene::scene(const arguments& args):
 	)
 {}
 
-scene::scene(const std::filesystem::path& file,
+scene::scene(RTCDevice device,
+	const std::filesystem::path& file,
 	int image_width,
 	int image_height,
 	int samples_per_pixel,
 	int max_depth,
 	glm::vec3 background
-)
+):
+	rtc_scene(rtcNewScene(device))
 {
 	Assimp::Importer importer;
 
@@ -58,8 +61,10 @@ scene::scene(const std::filesystem::path& file,
 	}
 
 	import_cameras(*ai_scene, image_width, image_height, samples_per_pixel, max_depth, background);
-	// TODO: Import meshes
-	// TODO: Import material
+	import_meshes(*ai_scene, device);
+	// TODO: Import materials
+
+	rtcCommitScene(rtc_scene);
 }
 
 void scene::import_cameras(const aiScene& ai_scene,
@@ -76,4 +81,78 @@ void scene::import_cameras(const aiScene& ai_scene,
 
 		cameras.emplace_back(image_width, image_height, samples_per_pixel, max_depth, camera, background);
 	}
+}
+
+void scene::import_meshes(const aiScene& ai_scene, RTCDevice device)
+{
+	for(size_t i = 0; i < ai_scene.mNumMeshes; i++)
+	{
+		const aiMesh& mesh = *ai_scene.mMeshes[i];
+
+		RTCGeometry rtc_geom = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
+
+		import_vertices(mesh, rtc_geom);
+		import_indices(mesh, rtc_geom);
+
+		rtcCommitGeometry(rtc_geom);
+
+		// TODO: Assign id
+		unsigned id = rtcAttachGeometry(rtc_scene, rtc_geom);
+
+		rtcReleaseGeometry(rtc_geom);
+	}
+}
+
+void scene::import_vertices(const aiMesh& mesh, RTCGeometry rtc_geom)
+{
+	float* verts = (float*)rtcSetNewGeometryBuffer(
+		rtc_geom,
+		RTC_BUFFER_TYPE_VERTEX,
+		0,
+		RTC_FORMAT_FLOAT3,
+		3*sizeof(float),
+		mesh.mNumVertices
+	);
+
+	if(verts == nullptr)
+		return;
+
+	for(size_t i = 0; i < mesh.mNumVertices; i++)
+	{
+		const auto& vert = mesh.mVertices[i];
+
+		verts[3*i] = vert.x;
+		verts[3*i+1] = vert.y;
+		verts[3*i+2] = vert.z;
+	}
+}
+
+void scene::import_indices(const aiMesh& mesh, RTCGeometry rtc_geom)
+{
+	unsigned* indices = (unsigned*)rtcSetNewGeometryBuffer(
+		rtc_geom,
+		RTC_BUFFER_TYPE_INDEX,
+		0,
+		RTC_FORMAT_UINT3,
+		3*sizeof(unsigned),
+		mesh.mNumFaces
+	);
+
+	if(indices == nullptr)
+		return;
+
+	for(size_t i = 0; i < mesh.mNumFaces; i++)
+	{
+		const auto& face = mesh.mFaces[i];
+		assert(face.mNumIndices == 3);
+
+		indices[3*i] = face.mIndices[0];
+		indices[3*i+1] = face.mIndices[1];
+		indices[3*i+2] = face.mIndices[2];
+	}
+}
+
+scene::~scene()
+{
+	rtcReleaseScene(rtc_scene);
 }

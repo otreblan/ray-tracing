@@ -22,6 +22,7 @@ target_sources(${PROJECT_NAME}
 		main.cpp
 		quad.cpp
 		ray.cpp
+		rtweekend.cpp
 		scene.cpp
 		sphere.cpp
 )

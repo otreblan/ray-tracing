@@ -20,15 +20,22 @@
 #include "hittable.hpp"
 
 #include <filesystem>
+#include <memory>
 #include <vector>
+
+#include <embree4/rtcore.h>
 
 class arguments;
 struct aiScene;
+struct aiMesh;
 
 class scene
 {
 private:
+	RTCScene rtc_scene;
+
 	std::vector<camera> cameras;
+	std::vector<std::unique_ptr<hittable>> geometry;
 
 	void import_cameras(const aiScene& ai_scene,
 		int image_width,
@@ -38,9 +45,14 @@ private:
 		glm::vec3 background
 	);
 
+	void import_meshes(const aiScene& ai_scene, RTCDevice device);
+	void import_vertices(const aiMesh& mesh, RTCGeometry rtc_geom);
+	void import_indices(const aiMesh& mesh, RTCGeometry rtc_geom);
+
 public:
-	scene(const arguments& args);
-	scene(const std::filesystem::path& file,
+	scene(RTCDevice device, const arguments& args);
+	scene(RTCDevice device,
+		const std::filesystem::path& file,
 		int image_width,
 		int image_height,
 		int samples_per_pixel,
@@ -48,4 +60,5 @@ public:
 		glm::vec3 background
 	);
 
+	~scene();
 };
