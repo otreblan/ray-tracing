@@ -34,7 +34,7 @@ scene::scene(RTCDevice device, const arguments& args):
 		args.image_height,
 		args.samples_per_pixel,
 		args.max_depth,
-		glm::vec3(0.01f)
+		glm::vec3(0.00f)
 	)
 {}
 
@@ -120,13 +120,17 @@ void scene::import_materials(const aiScene& ai_scene)
 		{
 			materials.emplace_back(std::make_shared<diffuse_light>(to_glm(emission)));
 		}
+		else if((std::string)material.GetName().C_Str() == "Glass")
+		{
+			materials.emplace_back(std::make_shared<dielectric>(1.5f));
+		}
 		else
 		{
 			aiColor3D diffuse;
 			material.Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
 			materials.emplace_back(std::make_shared<lambertian>(to_glm(diffuse)));
 		}
-		// TODO: Import metal and dielectric
+		// TODO: Import metal
 	}
 }
 
