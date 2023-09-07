@@ -34,7 +34,7 @@ scene::scene(RTCDevice device, const arguments& args):
 		args.image_height,
 		args.samples_per_pixel,
 		args.max_depth,
-		glm::vec3(0.5f)
+		glm::vec3(0.01f)
 	)
 {}
 
@@ -66,10 +66,7 @@ scene::scene(RTCDevice device,
 	}
 
 	import_cameras(*ai_scene, image_width, image_height, samples_per_pixel, max_depth, background);
-
-	// TODO: Import materials
-	materials.emplace_back(std::make_shared<lambertian>(glm::vec3(0.1f, 0.2f, 0.5f)));
-
+	import_materials(*ai_scene);
 	import_meshes(*ai_scene, device);
 
 	rtcCommitScene(rtc_scene);
@@ -106,6 +103,30 @@ void scene::import_cameras(const aiScene& ai_scene,
 			background,
 			glm::mat4(1)
 		);
+	}
+}
+
+void scene::import_materials(const aiScene& ai_scene)
+{
+	for(size_t i = 0; i < ai_scene.mNumMaterials; i++)
+	{
+		const auto& material = *ai_scene.mMaterials[i];
+		fmt::print(stderr, "Importing material {}.\n", material.GetName().C_Str());
+
+		aiColor3D emission;
+		material.Get(AI_MATKEY_COLOR_EMISSIVE, emission);
+
+		if(!emission.IsBlack())
+		{
+			materials.emplace_back(std::make_shared<diffuse_light>(to_glm(emission)));
+		}
+		else
+		{
+			aiColor3D diffuse;
+			material.Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+			materials.emplace_back(std::make_shared<lambertian>(to_glm(diffuse)));
+		}
+		// TODO: Import metal and dielectric
 	}
 }
 

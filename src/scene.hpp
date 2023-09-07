@@ -44,6 +44,7 @@ private:
 		glm::vec3 background
 	);
 
+	void import_materials(const aiScene& ai_scene);
 	void import_meshes(const aiScene& ai_scene, RTCDevice device);
 	void import_vertices(const aiMesh& mesh, RTCGeometry rtc_geom);
 	void import_indices(const aiMesh& mesh, RTCGeometry rtc_geom);

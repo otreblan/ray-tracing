@@ -20,6 +20,7 @@
 
 #include <assimp/matrix4x4.h>
 #include <assimp/vector3.h>
+#include <assimp/Importer.hpp>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/compatibility.hpp>
 #include <glm/vec3.hpp>
@@ -31,6 +32,11 @@ void errorFunction(void* userPtr, enum RTCError error, const char* str);
 inline glm::vec3 to_glm(aiVector3D v)
 {
 	return {v.x, v.y, v.z};
+}
+
+inline glm::vec3 to_glm(aiColor3D c)
+{
+	return {c.r, c.g, c.b};
 }
 
 inline glm::mat4 to_glm(aiMatrix4x4 m)

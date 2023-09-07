@@ -168,7 +168,7 @@ camera::camera(
 		image_height,
 		samples_per_pixel,
 		max_depth,
-		c.mHorizontalFOV,
+		c.mHorizontalFOV/2,
 		transformation*glm::vec4(to_glm(c.mPosition), 1),
 		transformation*glm::vec4(to_glm(c.mLookAt), 1),
 		transformation*glm::vec4(to_glm(c.mUp), 1),
