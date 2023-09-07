@@ -14,23 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "hittable_list.hpp"
+#include "mesh.hpp"
 
-bool hittable_list::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
+mesh::mesh(unsigned id, std::shared_ptr<material> m):
+	id(id),
+	mat_ptr(m)
+{}
+
+bool mesh::hit(const ray&, float, float, hit_record& rec) const
 {
-	hit_record temp_rec;
-	bool hit_anything = false;
-	float closest_so_far = t_max;
+	// TODO: refactor this
+	rec.mat_ptr = mat_ptr;
+	rec.t = rec.get().ray.tfar;
+	rec.p = ray(rec.get().ray).at(rec.t);
 
-	for(const auto& object : objects)
-	{
-		if(object && object->hit(r, t_min, closest_so_far, temp_rec))
-		{
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			rec = temp_rec;
-		}
-	}
+	rec.normal.x = rec.get().hit.Ng_x;
+	rec.normal.y = rec.get().hit.Ng_y;
+	rec.normal.z = rec.get().hit.Ng_z;
 
-	return hit_anything;
+	rec.normal = glm::normalize(rec.normal);
+
+	return true;
 }

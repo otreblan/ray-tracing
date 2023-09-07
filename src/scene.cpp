@@ -15,6 +15,9 @@
 // along with ray-tracing.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "arguments.hpp"
+#include "material.hpp"
+#include "mesh.hpp"
+#include "rtweekend.hpp"
 #include "scene.hpp"
 
 #include <assimp/Importer.hpp>
@@ -31,7 +34,7 @@ scene::scene(RTCDevice device, const arguments& args):
 		args.image_height,
 		args.samples_per_pixel,
 		args.max_depth,
-		glm::vec3(0.01f)
+		glm::vec3(0.5f)
 	)
 {}
 
@@ -45,13 +48,15 @@ scene::scene(RTCDevice device,
 ):
 	rtc_scene(rtcNewScene(device))
 {
+	rtcSetSceneBuildQuality(rtc_scene, RTCBuildQuality::RTC_BUILD_QUALITY_HIGH);
 	Assimp::Importer importer;
 
 	const aiScene* ai_scene = importer.ReadFile(
 		file,
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_GenNormals
+		aiProcess_GenNormals |
+		aiProcess_PreTransformVertices // TODO: Apply transforms to every node
 	);
 
 	if(ai_scene == nullptr)
@@ -61,8 +66,11 @@ scene::scene(RTCDevice device,
 	}
 
 	import_cameras(*ai_scene, image_width, image_height, samples_per_pixel, max_depth, background);
-	import_meshes(*ai_scene, device);
+
 	// TODO: Import materials
+	materials.emplace_back(std::make_shared<lambertian>(glm::vec3(0.1f, 0.2f, 0.5f)));
+
+	import_meshes(*ai_scene, device);
 
 	rtcCommitScene(rtc_scene);
 }
@@ -78,8 +86,26 @@ void scene::import_cameras(const aiScene& ai_scene,
 	for(size_t i = 0; i < ai_scene.mNumCameras; i++)
 	{
 		const aiCamera& camera = *ai_scene.mCameras[i];
+		fmt::print(stderr, "Importing camera {}.\n", camera.mName.C_Str());
 
-		cameras.emplace_back(image_width, image_height, samples_per_pixel, max_depth, camera, background);
+		auto* node = ai_scene.mRootNode->FindNode(camera.mName);
+		auto transformation = to_glm(node->mParent->mTransformation)*to_glm(node->mTransformation);
+
+		//aiMatrix4x4 mat;
+		//camera.GetCameraMatrix(mat);
+
+		//auto position = mat*camera.mPosition;
+		//auto position2 = to_glm(node->mTransformation)*glm::vec4(to_glm(camera.mPosition),1);
+
+		cameras.emplace_back(
+			image_width,
+			image_height,
+			samples_per_pixel,
+			max_depth,
+			camera,
+			background,
+			glm::mat4(1)
+		);
 	}
 }
 
@@ -87,17 +113,24 @@ void scene::import_meshes(const aiScene& ai_scene, RTCDevice device)
 {
 	for(size_t i = 0; i < ai_scene.mNumMeshes; i++)
 	{
-		const aiMesh& mesh = *ai_scene.mMeshes[i];
+		const aiMesh& ai_mesh = *ai_scene.mMeshes[i];
+		fmt::print(stderr, "Importing mesh {}.\n", ai_mesh.mName.C_Str());
 
 		RTCGeometry rtc_geom = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
 
-		import_vertices(mesh, rtc_geom);
-		import_indices(mesh, rtc_geom);
+		auto* node = ai_scene.mRootNode->FindNode(ai_mesh.mName);
+		auto transformation = node->mParent->mTransformation*node->mTransformation;
+
+		import_vertices(ai_mesh, rtc_geom);
+		import_indices(ai_mesh, rtc_geom);
+
+		// TODO: Set transformation
 
 		rtcCommitGeometry(rtc_geom);
 
-		// TODO: Assign id
 		unsigned id = rtcAttachGeometry(rtc_scene, rtc_geom);
+		void* geo_ptr = geometry.emplace_back(std::make_unique<mesh>(id, materials.at(ai_mesh.mMaterialIndex))).get();
+		rtcSetGeometryUserData(rtc_geom, geo_ptr);
 
 		rtcReleaseGeometry(rtc_geom);
 	}
@@ -155,4 +188,9 @@ void scene::import_indices(const aiMesh& mesh, RTCGeometry rtc_geom)
 scene::~scene()
 {
 	rtcReleaseScene(rtc_scene);
+}
+
+void scene::render()
+{
+	cameras.begin()->render(*this);
 }

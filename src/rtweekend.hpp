@@ -18,17 +18,43 @@
 
 #include <random>
 
+#include <assimp/matrix4x4.h>
 #include <assimp/vector3.h>
-#include <embree4/rtcore.h>
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/compatibility.hpp>
 #include <glm/vec3.hpp>
+
+#include "embree.hpp"
 
 void errorFunction(void* userPtr, enum RTCError error, const char* str);
 
 inline glm::vec3 to_glm(aiVector3D v)
 {
 	return {v.x, v.y, v.z};
+}
+
+inline glm::mat4 to_glm(aiMatrix4x4 m)
+{
+	glm::mat4 _m;
+
+	for(size_t i = 0; i < 4; i++)
+	{
+		for(size_t j = 0; j < 4; j++)
+		{
+			_m[i][j] = m[i][j];
+		}
+	}
+
+	return glm::transpose(_m);
+}
+
+inline glm::vec3 transform(glm::mat4 transformation, glm::vec3 v, float w = 1.f)
+{
+	glm::vec4 v4(v, w);
+
+	v4 = transformation*v4;
+
+	return v4;
 }
 
 inline float random_float()

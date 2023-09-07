@@ -16,24 +16,32 @@
 
 #include <assimp/camera.h>
 #include <glm/gtx/compatibility.hpp>
+#include <glm/vec4.hpp>
 
 #include "camera.hpp"
 #include "hittable.hpp"
 #include "material.hpp"
-#include "rtweekend.hpp"
 #include "print.hpp"
+#include "rtweekend.hpp"
+#include "scene.hpp"
 
-glm::vec3 camera::ray_color(const ray& r, const hittable& world, int depth)
+glm::vec3 camera::ray_color(const ray& r, RTCScene scene, int depth)
 {
-	hit_record rec;
-
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if(depth <= 0)
 		return glm::vec3(0.f);
 
+	hit_record rec(r);
+	rtcIntersect1(scene, &rec.get());
+
 	// If the ray hits nothing, return the background
-	if(!world.hit(r, 0.001f, HUGE_VALF, rec))
+	if(rec.get().hit.geomID == RTC_INVALID_GEOMETRY_ID)
 		return background;
+
+	// TODO: Refactor this to use the wrapper classes
+	hittable& hitted = *(hittable*)rtcGetGeometryUserData(rtcGetGeometry(scene, rec.get().hit.geomID));
+
+	hitted.hit(r, 0, 0, rec);
 
 	ray scattered;
 	glm::vec3 attenuation;
@@ -41,7 +49,7 @@ glm::vec3 camera::ray_color(const ray& r, const hittable& world, int depth)
 
 	// If the ray hits, it bounces
 	if(rec.mat_ptr && rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-		return attenuation * ray_color(scattered, world, depth-1) + color_from_emission;
+		return attenuation * ray_color(scattered, scene, depth-1) + color_from_emission;
 
 	return color_from_emission;
 }
@@ -66,8 +74,10 @@ glm::vec3 camera::pixel_sample_square() const
 	return (px * pixel_delta_u) + (py * pixel_delta_v);
 }
 
-void camera::render(const hittable& world)
+void camera::render(const scene& world)
 {
+	const auto scene = world.rtc_scene;
+
 	bool stdout_tty = isatty(STDOUT_FILENO);
 
 	// Render
@@ -85,7 +95,7 @@ void camera::render(const hittable& world)
 			for(int s = 0; s < samples_per_pixel; s++)
 			{
 				ray r = get_ray(i, j);
-				pixel_color += ray_color(r, world, max_depth);
+				pixel_color += ray_color(r, scene, max_depth);
 			}
 
 			fmt::print("{}\n", sampled_color(pixel_color, samples_per_pixel));
@@ -113,7 +123,7 @@ camera::camera(
 	samples_per_pixel(samples_per_pixel),
 	max_depth(max_depth),
 	vfov(vfov),
-	lookfrom(lookfrom),
+	lookfrom(lookfrom), // TODO: Transform this?
 	lookat(lookat),
 	vup(vup),
 	background(background),
@@ -121,7 +131,7 @@ camera::camera(
 {
 	// Determine viewport dimensions.
 	float focal_length = (lookfrom-lookat).length();
-	float theta = degrees_to_radians(vfov);
+	float theta = vfov;
 	float h = tan(theta/2);
 	float viewport_height = 2.f * h * focal_length;
 	float viewport_width = viewport_height * (float)image_width/image_height;
@@ -150,7 +160,8 @@ camera::camera(
 	int samples_per_pixel,
 	int max_depth,
 	const aiCamera& c,
-	glm::vec3 background
+	glm::vec3 background,
+	glm::mat4 transformation
 	):
 	camera(
 		image_width,
@@ -158,9 +169,9 @@ camera::camera(
 		samples_per_pixel,
 		max_depth,
 		c.mHorizontalFOV,
-		to_glm(c.mPosition),
-		to_glm(c.mLookAt),
-		to_glm(c.mUp),
+		transformation*glm::vec4(to_glm(c.mPosition), 1),
+		transformation*glm::vec4(to_glm(c.mLookAt), 1),
+		transformation*glm::vec4(to_glm(c.mUp), 1),
 		background
 	)
 {}

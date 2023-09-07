@@ -18,8 +18,8 @@ target_sources(${PROJECT_NAME}
 	PRIVATE
 		arguments.cpp
 		camera.cpp
-		hittable_list.cpp
 		main.cpp
+		mesh.cpp
 		quad.cpp
 		ray.cpp
 		rtweekend.cpp

@@ -25,7 +25,7 @@ ray::ray(RTCRay _ray):
 ray::ray(glm::vec3 origin, glm::vec3 direction)
 {
 	set_origin(origin);
-	_ray.tnear = 0;
+	_ray.tnear = 0.001f;
 
 	set_direction(direction);
 	_ray.tfar = std::numeric_limits<float>::infinity();

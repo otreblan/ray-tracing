@@ -23,8 +23,6 @@
 #include <memory>
 #include <vector>
 
-#include <embree4/rtcore.h>
-
 class arguments;
 struct aiScene;
 struct aiMesh;
@@ -34,7 +32,8 @@ class scene
 private:
 	RTCScene rtc_scene;
 
-	std::vector<camera> cameras;
+	std::vector<camera>                    cameras;
+	std::vector<std::shared_ptr<material>> materials;
 	std::vector<std::unique_ptr<hittable>> geometry;
 
 	void import_cameras(const aiScene& ai_scene,
@@ -60,5 +59,9 @@ public:
 		glm::vec3 background
 	);
 
+	void render();
+
 	~scene();
+
+	friend camera;
 };

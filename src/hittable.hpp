@@ -45,6 +45,24 @@ public:
 		// TODO: Evaluate orig.at(tfar)
 		return p;
 	}
+
+	hit_record(const ray& r)
+	{
+		rayHit.ray = r.get();
+
+		rayHit.hit.geomID    = RTC_INVALID_GEOMETRY_ID;
+		rayHit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+	}
+
+	RTCRayHit& get()
+	{
+		return rayHit;
+	}
+
+	const RTCRayHit& get() const
+	{
+		return rayHit;
+	}
 };
 
 class hittable

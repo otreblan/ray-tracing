@@ -17,11 +17,13 @@
 #pragma once
 
 #include <fmt/format.h>
+#include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
 #include "ray.hpp"
 
 class hittable;
+class scene;
 struct aiCamera;
 
 class camera
@@ -41,13 +43,15 @@ private:
 
 	glm::vec3 background;
 
+	//glm::mat4 transformation; // Transformation matrix
+
 	glm::vec3 center;         // Camera center
 	glm::vec3 pixel00_loc;    // Location of pixel 0, 0
 	glm::vec3 pixel_delta_u;  // Offset to pixel to the right
 	glm::vec3 pixel_delta_v;  // Offset to pixel below
 	glm::vec3 u, v, w;        // Camera frame basis vectors
 
-	glm::vec3 ray_color(const ray& r, const hittable& world, int depth);
+	glm::vec3 ray_color(const ray& r, RTCScene scene, int depth);
 
 	ray get_ray(int i, int j) const;
 
@@ -64,11 +68,20 @@ public:
 		glm::vec3 lookat,
 		glm::vec3 vup,
 		glm::vec3 background
+		//glm::mat4 transformation = glm::mat4(1.f)
 	);
 
-	camera(int image_width, int image_height, int samples_per_pixel, int max_depth, const aiCamera& c, glm::vec3 background);
+	camera(
+		int image_width,
+		int image_height,
+		int samples_per_pixel,
+		int max_depth,
+		const aiCamera& c,
+		glm::vec3 background,
+		glm::mat4 transformation
+	);
 
-	void render(const hittable& world);
+	void render(const scene& world);
 };
 
 class sampled_color

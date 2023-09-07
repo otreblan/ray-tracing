@@ -16,32 +16,18 @@
 
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <concepts>
-
 #include "hittable.hpp"
 
-class hittable_list: public hittable
+class mesh: public hittable
 {
+private:
+	unsigned id;
+	std::shared_ptr<material> mat_ptr;
+
 public:
-	hittable_list(){};
-
-	void clear()
-	{
-		objects.clear();
-	}
-
-	template<class T, typename... Args>
-		requires(std::derived_from<T, hittable>)
-	void add(Args&&... args)
-	{
-		objects.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-	}
+	mesh(unsigned id, std::shared_ptr<material> m);
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const override;
 
-	virtual ~hittable_list() = default;
-
-	std::vector<std::unique_ptr<hittable>> objects;
+	virtual ~mesh() = default;
 };
