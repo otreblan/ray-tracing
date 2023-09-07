@@ -23,7 +23,7 @@
 void arguments::usage(int exit_code) const
 {
 	std::cout
-		<< "Usage: " << argv[0] << " [OPTION]...\n"
+		<< "Usage: " << argv[0] << " [OPTION]... SCENE\n"
 		<< "\t-h, --help                 Show this help.\n"
 		<< "\t-w, --image-width=N        Image width in pixels.\n"
 		<< "\t-H, --image-heigth=N       Images height in pixels.\n"

@@ -23,6 +23,7 @@
 #include "material.hpp"
 #include "quad.hpp"
 #include "rtweekend.hpp"
+#include "scene.hpp"
 #include "sphere.hpp"
 
 int main(int argc, char** argv)
@@ -82,6 +83,9 @@ int main(int argc, char** argv)
 		{0,  1, 0},
 		glm::vec3(0.01f)
 	);
+
+	// TODO: Render from main_scene
+	scene main_scene(args);
 
 	cam.render(world);
 
