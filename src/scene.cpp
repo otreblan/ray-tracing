@@ -34,7 +34,7 @@ scene::scene(RTCDevice device, const arguments& args):
 		args.image_height,
 		args.samples_per_pixel,
 		args.max_depth,
-		glm::vec3(0.00f)
+		glm::vec3(0.01f)
 	)
 {}
 
@@ -217,5 +217,6 @@ scene::~scene()
 
 void scene::render()
 {
-	cameras.begin()->render(*this);
+	if(!cameras.empty())
+		cameras.begin()->render(*this);
 }
