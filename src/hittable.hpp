@@ -63,6 +63,21 @@ public:
 	{
 		return rayHit;
 	}
+
+	glm::vec3 get_normal() const
+	{
+		return glm::normalize(glm::vec3{rayHit.hit.Ng_x, rayHit.hit.Ng_y, rayHit.hit.Ng_z});
+	}
+
+	glm::vec3 get_origin() const
+	{
+		return {rayHit.ray.org_x, rayHit.ray.org_y, rayHit.ray.org_z};
+	}
+
+	glm::vec3 get_direction() const
+	{
+		return {rayHit.ray.dir_x, rayHit.ray.dir_y, rayHit.ray.dir_z};
+	}
 };
 
 class hittable

@@ -27,12 +27,10 @@ bool mesh::hit(const ray&, float, float, hit_record& rec) const
 	rec.mat_ptr = mat_ptr;
 	rec.t = rec.get().ray.tfar;
 	rec.p = ray(rec.get().ray).at(rec.t);
+	rec.normal = rec.get_normal();
 
-	rec.normal.x = rec.get().hit.Ng_x;
-	rec.normal.y = rec.get().hit.Ng_y;
-	rec.normal.z = rec.get().hit.Ng_z;
-
-	rec.normal = glm::normalize(rec.normal);
+	rec.front_face = glm::dot(rec.get_direction(), rec.normal) < 0;
+	rec.normal = rec.front_face ? rec.normal : -rec.normal;
 
 	return true;
 }
