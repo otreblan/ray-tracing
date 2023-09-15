@@ -146,8 +146,12 @@ void scene::import_meshes(const aiScene& ai_scene, RTCDevice device)
 		auto* node = ai_scene.mRootNode->FindNode(ai_mesh.mName);
 		auto transformation = node->mParent->mTransformation*node->mTransformation;
 
+		// One slot for the vertex normals.
+		rtcSetGeometryVertexAttributeCount(rtc_geom, 1);
+
 		import_vertices(ai_mesh, rtc_geom);
 		import_indices(ai_mesh, rtc_geom);
+		import_normals(ai_mesh, rtc_geom);
 
 		// TODO: Set transformation
 
@@ -207,6 +211,30 @@ void scene::import_indices(const aiMesh& mesh, RTCGeometry rtc_geom)
 		indices[3*i] = face.mIndices[0];
 		indices[3*i+1] = face.mIndices[1];
 		indices[3*i+2] = face.mIndices[2];
+	}
+}
+
+void scene::import_normals(const aiMesh& mesh, RTCGeometry rtc_geom)
+{
+	float* normals = (float*)rtcSetNewGeometryBuffer(
+		rtc_geom,
+		RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE,
+		0,
+		RTC_FORMAT_FLOAT3,
+		3*sizeof(float),
+		mesh.mNumVertices
+	);
+
+	if(normals == nullptr)
+		return;
+
+	for(size_t i = 0; i < mesh.mNumVertices; i++)
+	{
+		const auto& normal = mesh.mNormals[i];
+
+		normals[3*i] = normal.x;
+		normals[3*i+1] = normal.y;
+		normals[3*i+2] = normal.z;
 	}
 }
 

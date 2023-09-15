@@ -41,6 +41,7 @@ glm::vec3 camera::ray_color(const ray& r, RTCScene scene, int depth)
 	// TODO: Refactor this to use the wrapper classes
 	hittable& hitted = *(hittable*)rtcGetGeometryUserData(rtcGetGeometry(scene, rec.get().hit.geomID));
 
+	rec.normal = rec.get_normal(scene);
 	hitted.hit(r, 0, 0, rec);
 
 	ray scattered;

@@ -64,9 +64,13 @@ public:
 		return rayHit;
 	}
 
-	glm::vec3 get_normal() const
+	glm::vec3 get_normal(RTCScene scene) const
 	{
-		return glm::normalize(glm::vec3{rayHit.hit.Ng_x, rayHit.hit.Ng_y, rayHit.hit.Ng_z});
+		glm::vec3 norm;
+
+		rtcInterpolate0(rtcGetGeometry(scene, rayHit.hit.geomID), rayHit.hit.primID, rayHit.hit.u, rayHit.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, &norm.x, 3);
+
+		return glm::normalize(norm);
 	}
 
 	glm::vec3 get_origin() const

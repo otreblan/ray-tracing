@@ -48,6 +48,7 @@ private:
 	void import_meshes(const aiScene& ai_scene, RTCDevice device);
 	void import_vertices(const aiMesh& mesh, RTCGeometry rtc_geom);
 	void import_indices(const aiMesh& mesh, RTCGeometry rtc_geom);
+	void import_normals(const aiMesh& mesh, RTCGeometry rtc_geom);
 
 public:
 	scene(RTCDevice device, const arguments& args);
