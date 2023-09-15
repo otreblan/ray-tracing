@@ -87,6 +87,9 @@ arguments::arguments(int argc, char** argv):
 		}
 	}
 
+	if(optind >= argc)
+		usage(EXIT_FAILURE);
+
 	for(int i = optind; i < argc; i++)
 		scene = argv[i];
 }

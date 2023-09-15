@@ -1,7 +1,9 @@
 # Maintainer: Otreblan <otreblain@gmail.com>
 
+# shellcheck shell=bash disable=SC2034,SC2154,SC2164
+
 pkgname=ray-tracing-git
-pkgver=0.0.0.r52.ge146dcf
+pkgver=1.0.0.r0.gad68c40
 pkgrel=1
 epoch=
 pkgdesc="Ray tracing"
@@ -9,12 +11,12 @@ arch=('x86_64')
 url="https://github.com/otreblan/ray-tracing"
 license=('GPL3')
 groups=()
-depends=('fmt' 'embree' 'assimp')
+depends=('fmt' 'embree' 'assimp' 'bash-completion')
 makedepends=('git' 'cmake' 'glm')
 checkdepends=()
 optdepends=()
-provides=(${pkgname%-git})
-conflicts=(${pkgname%-git})
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
 _gitrepo=$(git rev-parse --show-toplevel)
 _headcommit=$(git rev-parse HEAD)
 source=("$pkgname::git+file://$_gitrepo#commit=$_headcommit")
