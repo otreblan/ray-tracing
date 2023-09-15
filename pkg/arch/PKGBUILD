@@ -9,7 +9,7 @@ arch=('x86_64')
 url="https://github.com/otreblan/ray-tracing"
 license=('GPL3')
 groups=()
-depends=('gcc-libs' 'fmt' 'embree' 'assimp')
+depends=('fmt' 'embree' 'assimp')
 makedepends=('git' 'cmake' 'glm')
 checkdepends=()
 optdepends=()
@@ -18,11 +18,7 @@ conflicts=(${pkgname%-git})
 _gitrepo=$(git rev-parse --show-toplevel)
 _headcommit=$(git rev-parse HEAD)
 source=("$pkgname::git+file://$_gitrepo#commit=$_headcommit")
-md5sums=('SKIP')
-
-prepare() {
-	mkdir -p "$srcdir/$pkgname/build"
-}
+sha256sums=('SKIP')
 
 pkgver() {
 	cd "$srcdir/$pkgname"
@@ -33,18 +29,15 @@ pkgver() {
 }
 
 build() {
-	cd "$srcdir/$pkgname/build"
-
-	cmake \
+	cmake -B build -S "$pkgname" \
+		-DCMAKE_BUILD_TYPE='None' \
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
-		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-		..
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-	make
+	cmake --build build
 }
 
 package() {
-	cd "$srcdir/$pkgname/build"
-	make DESTDIR="$pkgdir/" install
+	DESTDIR="$pkgdir" cmake --install build
 }

@@ -16,8 +16,4 @@
 
 #pragma once
 
-#ifdef LEGACY_EMBREE
-#include <embree3/rtcore.h>
-#else
 #include <embree4/rtcore.h>
-#endif

@@ -17,7 +17,7 @@
 cmake_minimum_required(VERSION 3.13.0)
 
 project(ray-tracing
-	VERSION 0.0.0
+	VERSION 1.0.0
 	DESCRIPTION "Ray tracing"
 	HOMEPAGE_URL "https://github.com/otreblan/ray-tracing"
 )
@@ -50,14 +50,6 @@ pkg_check_modules(libraries
 )
 
 find_package(embree 4)
-
-if(NOT embree_FOUND)
-	find_package(embree 3)
-	target_compile_definitions(${PROJECT_NAME}
-		PRIVATE
-			LEGACY_EMBREE
-	)
-endif()
 
 # Linking
 target_link_libraries(${PROJECT_NAME}
