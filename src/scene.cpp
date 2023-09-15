@@ -55,7 +55,7 @@ scene::scene(RTCDevice device,
 		file,
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_GenNormals |
+		aiProcess_GenSmoothNormals |
 		aiProcess_PreTransformVertices // TODO: Apply transforms to every node
 	);
 
