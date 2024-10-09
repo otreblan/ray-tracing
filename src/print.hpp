@@ -27,7 +27,7 @@ template<>
 struct fmt::formatter<glm::vec3>: fmt::formatter<int>
 {
 	template <typename FormatContext>
-	auto format(const glm::vec3& v, FormatContext& ctx)
+	auto format(const glm::vec3& v, FormatContext& ctx) const
 	{
 		return format_to(ctx.out(),
 			"{} {} {}",
@@ -42,7 +42,7 @@ template<>
 struct fmt::formatter<sampled_color>: fmt::formatter<int>
 {
 	template <typename FormatContext>
-	auto format(const sampled_color& c, FormatContext& ctx)
+	auto format(const sampled_color& c, FormatContext& ctx) const
 	{
 		float scale = 1.f/c.samples_per_pixel;
 
