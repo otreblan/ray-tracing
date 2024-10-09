@@ -46,10 +46,10 @@ pkg_check_modules(libraries
 	REQUIRED IMPORTED_TARGET
 		assimp
 		fmt
-		glm
 )
 
 find_package(embree 4)
+find_package(glm)
 find_package(bash-completion)
 
 # Linking
@@ -57,6 +57,12 @@ target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		PkgConfig::libraries
 		embree
+		glm::glm
+)
+
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+		GLM_ENABLE_EXPERIMENTAL
 )
 
 # Default flags
